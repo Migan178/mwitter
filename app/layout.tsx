@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import LocalFont from "next/font/local";
 import "./globals.css";
+import AuthProvider from "@/components/AuthProvider";
+import Navbar from "@/components/Navbar";
 
 const pretendard = LocalFont({
 	src: "../public/fonts/pretendard/PretendardVariable.woff2",
@@ -19,9 +21,12 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="ko" className={`h-screen ${pretendard.variable}`}>
-			<body className="grid h-screen items-center justify-center">
-				{children}
+		<html lang="ko" className={`${pretendard.variable}`}>
+			<body>
+				<AuthProvider>
+					<Navbar />
+					<main>{children}</main>
+				</AuthProvider>
 			</body>
 		</html>
 	);
