@@ -9,14 +9,22 @@ export default function LoginButton() {
 	if (status === "authenticated") {
 		return (
 			<button className={className} onClick={() => signOut()}>
-				log out
+				로그아웃
 			</button>
 		);
 	}
 
 	return (
-		<button className={className} onClick={() => signIn()}>
-			log in
-		</button>
+		<div>
+			<button
+				className={className}
+				onClick={() => (window.location.href = "/signup")}
+			>
+				회원가입
+			</button>
+			<button className={className} onClick={() => signIn()}>
+				로그인
+			</button>
+		</div>
 	);
 }
