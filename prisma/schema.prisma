@@ -14,12 +14,38 @@ datasource db {
 }
 
 model User {
-    id             Int    @id @default(autoincrement())
-    handle         String @unique @db.Char(16)
+    id             Int         @id @default(autoincrement())
+    handle         String      @unique @db.Char(16)
     name           String
-    email          String @unique
-    hashedPassword String @db.Text
+    email          String      @unique
+    hashedPassword String      @db.Text
     posts          Post[]
+    following      Following[] @relation("FollowingToFollower")
+    follower       Following[] @relation("FollowerToFollowing")
+    blocking       Blocking[]  @relation("BlockerToBlocked")
+    blockedBy      Blocking[]  @relation("BlockedToBlocker")
+}
+
+model Following {
+    followerId  Int
+    followingId Int
+    createAt    DateTime @default(now())
+
+    follower  User @relation("FollowerToFollowing", fields: [followerId], references: [id])
+    following User @relation("FollowingToFollower", fields: [followingId], references: [id])
+
+    @@id([followerId, followingId])
+}
+
+model Blocking {
+    blockerId Int
+    BlockedId Int
+    createdAt DateTime @default(now())
+
+    blocker User @relation("BlockerToBlocked", fields: [blockerId], references: [id])
+    blocked User @relation("BlockedToBlocker", fields: [BlockedId], references: [id])
+
+    @@id([blockerId, BlockedId])
 }
 
 model Post {
