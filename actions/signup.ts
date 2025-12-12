@@ -7,10 +7,10 @@ import { redirect } from "next/navigation";
 import * as z from "zod";
 
 const formSchema = z.object({
-	id: z.string("올바르지 않은 ID"),
-	name: z.string("올바르지 않은 이름"),
-	email: z.string("올바르지 않은 email"),
-	password: z.string("올바르지 않은 비밀번호"),
+	id: z.string("올바르지 않은 ID").trim().min(1),
+	name: z.string("올바르지 않은 이름").trim().min(1),
+	email: z.string("올바르지 않은 email").trim().min(1),
+	password: z.string("올바르지 않은 비밀번호").trim().min(1),
 });
 
 export async function createAccount(initialState: any, formData: FormData) {
@@ -21,9 +21,7 @@ export async function createAccount(initialState: any, formData: FormData) {
 		password: formData.get("password"),
 	});
 
-	if (!validatedData.success) {
-		return validatedData.error.message;
-	}
+	if (!validatedData.success) return validatedData.error.message;
 
 	const hashedPassword = await hashPassword(validatedData.data.password);
 

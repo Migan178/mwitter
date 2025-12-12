@@ -39,7 +39,7 @@ export const {
 					if (!isPasswordValid) return null;
 
 					return {
-						id: String(user.id),
+						id: user.id.toString(),
 						name: user.name,
 						email: user.email,
 					};
@@ -50,4 +50,16 @@ export const {
 			},
 		}),
 	],
+	callbacks: {
+		jwt({ token, user }) {
+			if (user) {
+				token.id = user.id;
+			}
+			return token;
+		},
+		session({ token, session }) {
+			session.user.id = token.id as string;
+			return session;
+		},
+	},
 });
