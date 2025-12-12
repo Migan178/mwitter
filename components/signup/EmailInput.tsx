@@ -4,11 +4,14 @@ import { checkEmailDuplication } from "@/actions/signup";
 import { useState } from "react";
 
 export default function EmailInput({
+	email,
+	setEmail,
 	setVerified,
 }: {
+	email: string;
+	setEmail: (email: string) => void;
 	setVerified: (verified: boolean) => void;
 }) {
-	const [email, setEmail] = useState("");
 	const [isEmailDuplicated, setEmailIsDuplicated] = useState(false);
 	const [isEmailChecking, setEmailIsChecking] = useState(false);
 

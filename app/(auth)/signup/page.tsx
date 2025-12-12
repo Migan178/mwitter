@@ -11,15 +11,31 @@ import { useActionState, useState } from "react";
 export default function SignUp() {
 	const [isVerified, setVerified] = useState(true);
 	const [state, formAction, pending] = useActionState(createAccount, null);
+	const [id, setId] = useState("");
+	const [email, setEmail] = useState("");
+	const [name, setName] = useState("");
+	const [password, setPassword] = useState("");
 
 	return (
 		<div className="grid h-screen items-center justify-center">
 			<div>
 				<Form action={formAction}>
-					<IdInput setVerified={setVerified} />
-					<EmailInput setVerified={setVerified} />
-					<NameInput setVerified={setVerified} />
-					<PasswordInput setVerified={setVerified} />
+					<IdInput id={id} setId={setId} setVerified={setVerified} />
+					<EmailInput
+						email={email}
+						setEmail={setEmail}
+						setVerified={setVerified}
+					/>
+					<NameInput
+						name={name}
+						setName={setName}
+						setVerified={setVerified}
+					/>
+					<PasswordInput
+						password={password}
+						setPassword={setPassword}
+						setVerified={setVerified}
+					/>
 					<div>
 						<input
 							type="submit"

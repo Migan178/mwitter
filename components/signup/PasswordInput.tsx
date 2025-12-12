@@ -3,11 +3,14 @@
 import { useState } from "react";
 
 export default function PasswordInput({
+	password,
+	setPassword,
 	setVerified,
 }: {
+	password: string;
+	setPassword: (password: string) => void;
 	setVerified: (verified: boolean) => void;
 }) {
-	const [password, setPassword] = useState("");
 	const [passwordCheck, setPasswordCheck] = useState("");
 	const [isPasswordPassed, setPasswordIsPassed] = useState(false);
 

@@ -3,11 +3,14 @@
 import { useState } from "react";
 
 export default function NameInput({
+	name,
+	setName,
 	setVerified,
 }: {
+	name: string;
+	setName: (name: string) => void;
 	setVerified: (verified: boolean) => void;
 }) {
-	const [name, setName] = useState("");
 	const [isNameLowerLength, setNameIsLowerLength] = useState(true);
 
 	function checkName() {

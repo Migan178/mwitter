@@ -4,11 +4,14 @@ import { checkIdDuplication } from "@/actions/signup";
 import { useState } from "react";
 
 export default function IdInput({
+	id,
+	setId,
 	setVerified,
 }: {
+	id: string;
+	setId: (id: string) => void;
 	setVerified: (verified: boolean) => void;
 }) {
-	const [id, setId] = useState("");
 	const [isIdDuplicated, setIdIsDuplicated] = useState(false);
 	const [isIdLowerLength, setIdLowerLength] = useState(true);
 	const [isIdChecking, setIdIsChecking] = useState(false);
