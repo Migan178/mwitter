@@ -24,6 +24,7 @@ model User {
     follower       Following[] @relation("FollowerToFollowing")
     blocking       Blocking[]  @relation("BlockerToBlocked")
     blockedBy      Blocking[]  @relation("BlockedToBlocker")
+    likes          Like[]
 }
 
 model Following {
@@ -55,4 +56,16 @@ model Post {
     content   String   @db.LongText
     author    User     @relation(fields: [authorId], references: [id])
     authorId  Int
+    likes     Like[]
+}
+
+model Like {
+    postId    Int
+    likerId   Int
+    createdAt DateTime @default(now())
+
+    post  Post @relation(fields: [postId], references: [id])
+    liker User @relation(fields: [likerId], references: [id])
+
+    @@id([postId, likerId])
 }
