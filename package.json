@@ -12,6 +12,7 @@
 		"@prisma/adapter-mariadb": "^7.1.0",
 		"@prisma/client": "^7.1.0",
 		"bcrypt": "^6.0.0",
+		"dayjs": "^1.11.19",
 		"dotenv": "^17.2.3",
 		"next": "16.0.7",
 		"next-auth": "5.0.0-beta.30",

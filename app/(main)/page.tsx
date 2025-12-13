@@ -1,15 +1,54 @@
-"use client";
-
 import CreatePost from "@/components/posts/CreatePost";
-import { useSession } from "next-auth/react";
+import List from "@/components/posts/List";
+import { auth } from "@/lib/auth";
+import prisma from "@/lib/prisma";
 
-export default function Home() {
-	const { status } = useSession();
+export default async function Home() {
+	const session = await auth();
 
-	return (
-		<div>
-			<h1 className="text-3xl font-bold">Hello, World!</h1>
-			{status === "authenticated" ? <CreatePost /> : null}
-		</div>
-	);
+	if (session) {
+		let posts: ({
+			author: {
+				name: string;
+			};
+		} & {
+			id: number;
+			createdAt: Date;
+			updatedAt: Date;
+			content: string;
+			authorId: number;
+		})[];
+
+		try {
+			// TODO: Show post following people's.
+			posts = await prisma.post.findMany({
+				orderBy: {
+					createdAt: "desc",
+				},
+				include: {
+					author: {
+						select: {
+							name: true,
+						},
+					},
+				},
+			});
+		} catch (err) {
+			return (
+				<div>
+					<CreatePost />
+					<h1>게시글 로드 중 문제 발생.</h1>
+				</div>
+			);
+		}
+
+		return (
+			<div>
+				<CreatePost />
+				<List posts={posts} />
+			</div>
+		);
+	}
+
+	return <h1>Hello, World!</h1>;
 }

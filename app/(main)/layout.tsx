@@ -3,6 +3,7 @@ import LocalFont from "next/font/local";
 import "../globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import Navbar from "@/components/Navbar";
+import { auth } from "@/lib/auth";
 
 const pretendard = LocalFont({
 	src: "../../public/fonts/pretendard/PretendardVariable.woff2",
@@ -15,15 +16,17 @@ export const metadata: Metadata = {
 	title: "Mwitter",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const session = await auth();
+
 	return (
 		<html lang="ko" className={`${pretendard.variable}`}>
 			<body>
-				<AuthProvider>
+				<AuthProvider session={session}>
 					<Navbar />
 					{children}
 				</AuthProvider>
