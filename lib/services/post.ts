@@ -31,7 +31,16 @@ export async function getPostsWithLikes(userId: number) {
 		},
 	});
 
-	return posts;
+	return posts.map(({ id, content, createdAt, _count, likes, author }) => {
+		return {
+			id,
+			content,
+			authorName: author.name,
+			isLiked: likes.length > 0,
+			likes: _count.likes,
+			createdAt,
+		};
+	});
 }
 
 export type PostsWithLikesResult = Awaited<
