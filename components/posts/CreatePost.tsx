@@ -4,14 +4,18 @@ import { createPost } from "@/actions/createPost";
 import Form from "next/form";
 import { useActionState, useEffect, useRef, useState } from "react";
 import ContentInput from "./ContentInput";
+import { useRouter } from "next/navigation";
 
 export default function CreatePost() {
 	const [state, formAction, pending] = useActionState(createPost, null);
 	const [content, setContent] = useState("");
+	const router = useRouter();
 
 	useEffect(() => {
 		if (state?.success) {
 			setContent("");
+
+			router.refresh();
 		}
 	}, [state]);
 

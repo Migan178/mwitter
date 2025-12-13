@@ -9,27 +9,26 @@ export async function toggleLike(formData: FormData) {
 	if (!session || !postId) return;
 
 	const data = {
-		where: {
-			postId_likerId: {
-				likerId: Number(session.user?.id),
-				postId: Number(postId),
-			},
-		},
+		likerId: Number(session.user?.id),
+		postId: Number(postId),
 	};
 	try {
-		const like = await prisma.like.findUnique(data);
+		const like = await prisma.like.findUnique({
+			where: {
+				postId_likerId: data,
+			},
+		});
 
 		if (like) {
-			await prisma.like.delete(data);
+			await prisma.like.delete({
+				where: {
+					postId_likerId: data,
+				},
+			});
 			return;
 		}
 
-		await prisma.like.create({
-			data: {
-				likerId: Number(session.user?.id),
-				postId: Number(postId),
-			},
-		});
+		await prisma.like.create({ data });
 	} catch (err) {
 		console.log(err);
 	}
