@@ -4,9 +4,12 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko";
 import { LikeButton } from "./LikeButton";
+import { useRouter } from "next/navigation";
+import Username from "../users/Username";
 
 export default function Post({
 	user,
+	handle,
 	content,
 	createdAt,
 	id,
@@ -14,6 +17,7 @@ export default function Post({
 	liked,
 }: {
 	user: string;
+	handle: string;
 	content: string;
 	createdAt: Date;
 	id: number;
@@ -23,11 +27,27 @@ export default function Post({
 	dayjs.extend(relativeTime);
 	dayjs.locale("ko");
 
+	const router = useRouter();
+
 	return (
 		<li key={id}>
 			<div>
-				<h1>{user}</h1>
-				<h2>{content}</h2>
+				<div>
+					<button
+						className="hover:cursor-pointer"
+						onClick={() => router.push(`/${handle}`)}
+					>
+						<Username name={user} handle={handle} />
+					</button>
+				</div>
+				<div>
+					<button
+						className="hover:cursor-pointer"
+						onClick={() => router.push(`/${handle}/posts/${id}`)}
+					>
+						<h2>{content}</h2>
+					</button>
+				</div>
 				<p>{dayjs(createdAt).fromNow()}</p>
 				<div>
 					<LikeButton

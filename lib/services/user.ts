@@ -1,6 +1,6 @@
 import prisma from "../prisma";
 
-export async function getUserByWithCountsAndPosts(
+export async function getUserByHandleWithCountsAndPosts(
 	handle: string,
 	sessionUserId: number,
 ) {
@@ -56,5 +56,5 @@ export async function getUserByWithCountsAndPosts(
 }
 
 export type UserByHandleWithCountsAndPostsResult = Awaited<
-	ReturnType<typeof getUserByWithCountsAndPosts>
+	ReturnType<typeof getUserByHandleWithCountsAndPosts>
 >;

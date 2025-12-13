@@ -1,7 +1,10 @@
 import CreatePost from "@/components/posts/CreatePost";
 import PostList from "@/components/posts/PostList";
 import { auth } from "@/lib/auth";
-import { getPostsWithLikes, PostsWithLikesResult } from "@/lib/services/post";
+import {
+	getPostsWithLikes,
+	type PostsWithLikesResult,
+} from "@/lib/services/post";
 
 export default async function Home() {
 	const session = await auth();

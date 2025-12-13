@@ -1,3 +1,5 @@
+import Username from "./Username";
+
 export default function UserInfo({
 	name,
 	handle,
@@ -17,8 +19,7 @@ export default function UserInfo({
 
 	return (
 		<div>
-			<h1>{name}</h1>
-			<h2>@{handle}</h2>
+			<Username name={name} handle={handle} />
 			<div>
 				<button>{followers}명의 팔로워</button>
 				<button>{following}명을 팔로우 중</button>

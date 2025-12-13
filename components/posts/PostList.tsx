@@ -12,6 +12,7 @@ export default async function PostList({
 				return (
 					<Post
 						user={post.authorName}
+						handle={post.handle}
 						content={post.content}
 						createdAt={post.createdAt}
 						id={post.id}

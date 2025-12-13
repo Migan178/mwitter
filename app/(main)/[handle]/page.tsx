@@ -4,8 +4,8 @@ import UserInfo from "@/components/users/UserInfo";
 import { auth } from "@/lib/auth";
 import { PostsWithLikesResult } from "@/lib/services/post";
 import {
-	getUserByWithCountsAndPosts,
-	UserByHandleWithCountsAndPostsResult,
+	getUserByHandleWithCountsAndPosts,
+	type UserByHandleWithCountsAndPostsResult,
 } from "@/lib/services/user";
 
 export default async function User({
@@ -18,7 +18,7 @@ export default async function User({
 	let user: UserByHandleWithCountsAndPostsResult;
 
 	try {
-		user = await getUserByWithCountsAndPosts(
+		user = await getUserByHandleWithCountsAndPosts(
 			handle,
 			Number(session?.user?.id),
 		);
@@ -34,6 +34,7 @@ export default async function User({
 			return {
 				id,
 				content,
+				handle,
 				authorName: user.name,
 				likes: _count.likes,
 				createdAt,

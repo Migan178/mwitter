@@ -1,11 +1,7 @@
-import prisma, { Prisma } from "../prisma";
+import prisma from "../prisma";
 
-export async function getPostsWithLikes(userId: number) {
-	// TODO: Show post following people's.
-	const posts = await prisma.post.findMany({
-		orderBy: {
-			createdAt: "desc",
-		},
+function getQueryWithLikes(userId: number) {
+	return {
 		select: {
 			id: true,
 			content: true,
@@ -13,6 +9,7 @@ export async function getPostsWithLikes(userId: number) {
 			author: {
 				select: {
 					name: true,
+					handle: true,
 				},
 			},
 			likes: {
@@ -20,7 +17,7 @@ export async function getPostsWithLikes(userId: number) {
 					likerId: true,
 				},
 				where: {
-					likerId: Number(userId),
+					likerId: userId,
 				},
 			},
 			_count: {
@@ -29,12 +26,23 @@ export async function getPostsWithLikes(userId: number) {
 				},
 			},
 		},
+	};
+}
+
+export async function getPostsWithLikes(userId: number) {
+	// TODO: Show post following people's.
+	const posts = await prisma.post.findMany({
+		...getQueryWithLikes(userId),
+		orderBy: {
+			createdAt: "desc",
+		},
 	});
 
 	return posts.map(({ id, content, createdAt, _count, likes, author }) => {
 		return {
 			id,
 			content,
+			handle: author.handle,
 			authorName: author.name,
 			isLiked: likes.length > 0,
 			likes: _count.likes,
@@ -43,6 +51,32 @@ export async function getPostsWithLikes(userId: number) {
 	});
 }
 
+export async function getPostWithLikes(
+	id: number,
+	userId: number,
+): Promise<PostWithLikesResult> {
+	const post = await prisma.post.findUnique({
+		...getQueryWithLikes(userId),
+		where: {
+			id,
+		},
+	});
+
+	if (!post) return null;
+
+	return {
+		id,
+		content: post.content,
+		handle: post.author.handle,
+		authorName: post.author.name,
+		isLiked: post.likes.length > 0,
+		likes: post._count.likes,
+		createdAt: post.createdAt,
+	};
+}
+
 export type PostsWithLikesResult = Awaited<
 	ReturnType<typeof getPostsWithLikes>
 >;
+
+export type PostWithLikesResult = PostsWithLikesResult[number] | null;
