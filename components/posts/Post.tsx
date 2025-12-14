@@ -45,7 +45,7 @@ export default function Post({
 						className="hover:cursor-pointer"
 						onClick={() => router.push(`/${handle}/posts/${id}`)}
 					>
-						<h2>{content}</h2>
+						<h2 className="whitespace-pre-wrap">{content}</h2>
 					</button>
 				</div>
 				<p>{dayjs(createdAt).fromNow()}</p>

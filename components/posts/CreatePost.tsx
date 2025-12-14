@@ -9,18 +9,20 @@ import { useRouter } from "next/navigation";
 export default function CreatePost() {
 	const [state, formAction, pending] = useActionState(createPost, null);
 	const [content, setContent] = useState("");
+	const formRef = useRef<HTMLFormElement>(null);
 	const router = useRouter();
 
 	useEffect(() => {
 		if (state?.success) {
 			setContent("");
 
+			formRef.current?.reset();
 			router.refresh();
 		}
 	}, [state]);
 
 	return (
-		<Form action={formAction}>
+		<Form ref={formRef} action={formAction}>
 			<ContentInput content={content} setContent={setContent} />
 			<div>
 				<input
