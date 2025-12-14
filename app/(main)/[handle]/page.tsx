@@ -1,8 +1,10 @@
 import PostList from "@/components/posts/PostList";
+import EditProfileButton from "@/components/users/EditProfileButton";
 import FollowButton from "@/components/users/FollowButton";
+import LoginToFollowButton from "@/components/users/LoginToFollowButton";
 import UserInfo from "@/components/users/UserInfo";
 import { auth } from "@/lib/auth";
-import { PostsWithLikesResult } from "@/lib/services/post";
+import { type PostsWithLikesResult } from "@/lib/services/post";
 import {
 	getUserByHandleWithCountsAndPosts,
 	type UserByHandleWithCountsAndPostsResult,
@@ -17,10 +19,14 @@ export default async function User({
 	const session = await auth();
 	let user: UserByHandleWithCountsAndPostsResult;
 
+	let showFollowButton,
+		showLoginToFollowButton,
+		showEditProfileButton = false;
+
 	try {
 		user = await getUserByHandleWithCountsAndPosts(
 			handle,
-			Number(session?.user?.id),
+			session ? Number(session.user?.id) : 0,
 		);
 	} catch (err) {
 		console.log(err);
@@ -28,6 +34,11 @@ export default async function User({
 	}
 
 	if (!user) return <h1>해당 하는 유저를 찾을 수 없음.</h1>;
+
+	if (session)
+		if (Number(session.user?.id) === user.id) showEditProfileButton = true;
+		else showFollowButton = true;
+	else showLoginToFollowButton = true;
 
 	const posts: PostsWithLikesResult = user.posts.map(
 		({ id, content, likes, createdAt, _count }) => {
@@ -53,14 +64,16 @@ export default async function User({
 					following={user.following.length}
 					posts={user.posts.length}
 				/>
-				<FollowButton
-					userId={user.id}
-					initialIsFollowing={
-						session
-							? user.following.includes(Number(session.user?.id))
-							: false
-					}
-				/>
+				{showEditProfileButton ? <EditProfileButton /> : null}
+				{showFollowButton ? (
+					<FollowButton
+						userId={user.id}
+						initialIsFollowing={user.following.includes(
+							Number(session?.user?.id),
+						)}
+					/>
+				) : null}
+				{showLoginToFollowButton ? <LoginToFollowButton /> : null}
 			</div>
 			<PostList posts={posts} />
 		</div>
