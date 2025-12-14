@@ -4,8 +4,8 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko";
 import { LikeButton } from "./LikeButton";
-import { useRouter } from "next/navigation";
 import Username from "../users/Username";
+import Link from "next/link";
 
 export default function Post({
 	user,
@@ -27,26 +27,18 @@ export default function Post({
 	dayjs.extend(relativeTime);
 	dayjs.locale("ko");
 
-	const router = useRouter();
-
 	return (
 		<li key={id}>
 			<div>
 				<div>
-					<button
-						className="hover:cursor-pointer"
-						onClick={() => router.push(`/${handle}`)}
-					>
+					<Link href={`/${handle}`}>
 						<Username name={user} handle={handle} />
-					</button>
+					</Link>
 				</div>
 				<div>
-					<button
-						className="hover:cursor-pointer"
-						onClick={() => router.push(`/${handle}/posts/${id}`)}
-					>
+					<Link href={`/${handle}/posts/${id}`}>
 						<h2 className="whitespace-pre-wrap">{content}</h2>
-					</button>
+					</Link>
 				</div>
 				<p>{dayjs(createdAt).fromNow()}</p>
 				<div>

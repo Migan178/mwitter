@@ -1,19 +1,14 @@
 "use client";
 
-import { redirect, useRouter } from "next/navigation";
 import LoginButton from "./LoginButton";
+import Link from "next/link";
 
 export default function Navbar() {
-	const router = useRouter();
-
 	return (
 		<nav className="flex justify-between">
-			<button
-				className="hover:cursor-pointer"
-				onClick={() => router.push("/")}
-			>
+			<Link href="/">
 				<h1>Mwitter</h1>
-			</button>
+			</Link>
 			<LoginButton />
 		</nav>
 	);
