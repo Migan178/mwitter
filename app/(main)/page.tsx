@@ -10,7 +10,7 @@ export default async function Home() {
 	const session = await auth();
 	let posts: PostsWithLikesResult;
 	try {
-		posts = await getPostsWithLikes(Number(session?.user?.id));
+		posts = await getPostsWithLikes(session ? Number(session.user?.id) : 0);
 	} catch (err) {
 		console.log(err);
 		return <h1>게시글 로드 중 문제 발생.</h1>;
