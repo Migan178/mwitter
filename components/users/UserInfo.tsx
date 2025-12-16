@@ -22,7 +22,9 @@ export default function UserInfo({
 		<div>
 			<Username name={name} handle={handle} />
 			<div>
-				<button>{followers}명의 팔로워</button>
+				<Link href={`/${handle}/followers`}>
+					{followers}명의 팔로워
+				</Link>
 				<Link href={`/${handle}/following`}>
 					{following}명을 팔로우 중
 				</Link>

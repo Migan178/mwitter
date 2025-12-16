@@ -107,3 +107,43 @@ export async function getUsersWithFollowing(handle: string, sessionId: number) {
 export type UsersWithFollowing = Awaited<
 	ReturnType<typeof getUsersWithFollowing>
 >;
+
+export async function getUsersWithFollowers(handle: string, sessionId: number) {
+	const user = await prisma.user.findUnique({
+		select: {
+			follower: {
+				select: {
+					follower: {
+						select: {
+							id: true,
+							handle: true,
+							name: true,
+							follower: {
+								select: {
+									followerId: true,
+								},
+								where: {
+									followerId: sessionId,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		where: {
+			handle,
+		},
+	});
+
+	if (!user) return [];
+
+	return user.follower.map(({ follower }) => {
+		return {
+			handle: follower.handle,
+			id: follower.id,
+			name: follower.name,
+			isFollowing: follower.follower.length > 0,
+		};
+	});
+}
