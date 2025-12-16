@@ -61,16 +61,14 @@ export default async function User({
 					name={user.name}
 					handle={handle}
 					followers={user.follower}
-					following={user.following.length}
+					following={user.following}
 					posts={user.posts.length}
 				/>
 				{showEditProfileButton ? <EditProfileButton /> : null}
 				{showFollowButton ? (
 					<FollowButton
 						userId={user.id}
-						initialIsFollowing={user.following.includes(
-							Number(session?.user?.id),
-						)}
+						initialIsFollowing={user.isFollowing}
 					/>
 				) : null}
 				{showLoginToFollowButton ? <LoginToFollowButton /> : null}

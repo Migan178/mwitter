@@ -8,14 +8,18 @@ export async function getUserByHandleWithCountsAndPosts(
 		select: {
 			id: true,
 			name: true,
-			following: {
+			follower: {
 				select: {
 					followerId: true,
+				},
+				where: {
+					followerId: sessionUserId,
 				},
 			},
 			_count: {
 				select: {
 					follower: true,
+					following: true,
 				},
 			},
 			posts: {
@@ -51,7 +55,8 @@ export async function getUserByHandleWithCountsAndPosts(
 		id: user.id,
 		posts: user.posts,
 		follower: user._count.follower,
-		following: user.following.map(following => following.followerId),
+		following: user._count.following,
+		isFollowing: user.follower.length > 0,
 	};
 }
 
