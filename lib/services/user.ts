@@ -63,3 +63,47 @@ export async function getUserByHandleWithCountsAndPosts(
 export type UserByHandleWithCountsAndPostsResult = Awaited<
 	ReturnType<typeof getUserByHandleWithCountsAndPosts>
 >;
+
+export async function getUsersWithFollowing(handle: string, sessionId: number) {
+	const user = await prisma.user.findUnique({
+		select: {
+			following: {
+				select: {
+					following: {
+						select: {
+							id: true,
+							handle: true,
+							name: true,
+							follower: {
+								select: {
+									followerId: true,
+								},
+								where: {
+									followerId: sessionId,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		where: {
+			handle,
+		},
+	});
+
+	if (!user) return [];
+
+	return user.following.map(({ following }) => {
+		return {
+			handle: following.handle,
+			id: following.id,
+			name: following.name,
+			isFollowing: following.follower.length > 0,
+		};
+	});
+}
+
+export type UsersWithFollowing = Awaited<
+	ReturnType<typeof getUsersWithFollowing>
+>;

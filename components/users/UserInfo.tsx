@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Username from "./Username";
 
 export default function UserInfo({
@@ -22,7 +23,9 @@ export default function UserInfo({
 			<Username name={name} handle={handle} />
 			<div>
 				<button>{followers}명의 팔로워</button>
-				<button>{following}명을 팔로우 중</button>
+				<Link href={`/${handle}/following`}>
+					{following}명을 팔로우 중
+				</Link>
 				<p>{postsCountString}개의 게시글</p>
 			</div>
 		</div>
