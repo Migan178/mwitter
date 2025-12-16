@@ -28,27 +28,25 @@ export default function Post({
 	dayjs.locale("ko");
 
 	return (
-		<li key={id}>
+		<div>
 			<div>
-				<div>
-					<Link href={`/${handle}`}>
-						<Username name={user} handle={handle} />
-					</Link>
-				</div>
-				<div>
-					<Link href={`/${handle}/posts/${id}`}>
-						<h2 className="whitespace-pre-wrap">{content}</h2>
-					</Link>
-				</div>
-				<p>{dayjs(createdAt).fromNow()}</p>
-				<div>
-					<LikeButton
-						postId={id}
-						initialLiked={liked}
-						initialLikes={likes}
-					/>
-				</div>
+				<Link href={`/${handle}`}>
+					<Username name={user} handle={handle} />
+				</Link>
 			</div>
-		</li>
+			<div>
+				<Link href={`/${handle}/posts/${id}`}>
+					<h2 className="whitespace-pre-wrap">{content}</h2>
+				</Link>
+			</div>
+			<p>{dayjs(createdAt).fromNow()}</p>
+			<div>
+				<LikeButton
+					postId={id}
+					initialLiked={liked}
+					initialLikes={likes}
+				/>
+			</div>
+		</div>
 	);
 }
