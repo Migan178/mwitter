@@ -6,7 +6,11 @@
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
-		"lint": "eslint"
+		"lint": "eslint",
+		"style": "prettier . -w",
+		"db:push": "prisma db push",
+		"db:generate": "prisma generate",
+		"db:sync": "pnpm db:push && pnpm db:generate"
 	},
 	"dependencies": {
 		"@prisma/adapter-mariadb": "^7.1.0",

@@ -20,8 +20,8 @@ model User {
     email          String      @unique
     hashedPassword String      @db.Text
     posts          Post[]
-    following      Following[] @relation("FollowingToFollower")
-    follower       Following[] @relation("FollowerToFollowing")
+    following      Following[] @relation("FollowerToFollowing")
+    follower       Following[] @relation("FollowingToFollower")
     blocking       Blocking[]  @relation("BlockerToBlocked")
     blockedBy      Blocking[]  @relation("BlockedToBlocker")
     likes          Like[]
@@ -40,13 +40,13 @@ model Following {
 
 model Blocking {
     blockerId Int
-    BlockedId Int
+    blockedId Int
     createdAt DateTime @default(now())
 
-    blocker User @relation("BlockerToBlocked", fields: [blockerId], references: [id])
-    blocked User @relation("BlockedToBlocker", fields: [BlockedId], references: [id])
+    blocker User @relation("BlockerToBlocked", fields: [blockedId], references: [id])
+    blocked User @relation("BlockedToBlocker", fields: [blockerId], references: [id])
 
-    @@id([blockerId, BlockedId])
+    @@id([blockerId, blockedId])
 }
 
 model Post {
