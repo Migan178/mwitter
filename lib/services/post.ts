@@ -29,8 +29,7 @@ function getQueryWithLikes(userId: number) {
 	};
 }
 
-export async function getPostsWithLikes(userId: number) {
-	// TODO: Show post following people's.
+export async function getAllPostsWithLikes(userId: number) {
 	const posts = await prisma.post.findMany({
 		...getQueryWithLikes(userId),
 		orderBy: {
@@ -38,17 +37,45 @@ export async function getPostsWithLikes(userId: number) {
 		},
 	});
 
-	return posts.map(({ id, content, createdAt, _count, likes, author }) => {
-		return {
-			id,
-			content,
-			handle: author.handle,
-			authorName: author.name,
-			isLiked: likes.length > 0,
-			likes: _count.likes,
-			createdAt,
-		};
+	return posts.map(({ id, content, createdAt, _count, likes, author }) => ({
+		id,
+		content,
+		handle: author.handle,
+		authorName: author.name,
+		isLiked: likes.length > 0,
+		likes: _count.likes,
+		createdAt,
+	}));
+}
+
+export async function getFollowingPostsWithLikes(userId: number) {
+	const posts = await prisma.post.findMany({
+		...getQueryWithLikes(userId),
+		orderBy: {
+			createdAt: "desc",
+		},
+		where: {
+			author: {
+				follower: {
+					some: {
+						follower: {
+							id: userId,
+						},
+					},
+				},
+			},
+		},
 	});
+
+	return posts.map(({ id, content, createdAt, _count, likes, author }) => ({
+		id,
+		content,
+		handle: author.handle,
+		authorName: author.name,
+		isLiked: likes.length > 0,
+		likes: _count.likes,
+		createdAt,
+	}));
 }
 
 export async function getPostWithLikes(
@@ -76,7 +103,7 @@ export async function getPostWithLikes(
 }
 
 export type PostsWithLikesResult = Awaited<
-	ReturnType<typeof getPostsWithLikes>
+	ReturnType<typeof getAllPostsWithLikes>
 >;
 
 export type PostWithLikesResult = PostsWithLikesResult[number] | null;

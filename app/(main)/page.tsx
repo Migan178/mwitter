@@ -1,26 +1,31 @@
 import CreatePost from "@/components/posts/CreatePost";
 import PostList from "@/components/posts/PostList";
+import PostsWrapper from "@/components/posts/PostsWrapper";
+import SwitchTabButton from "@/components/posts/SwitchTabButton";
 import { auth } from "@/lib/auth";
 import {
-	getPostsWithLikes,
-	type PostsWithLikesResult,
+	getAllPostsWithLikes,
+	getFollowingPostsWithLikes,
 } from "@/lib/services/post";
 
 export default async function Home() {
 	const session = await auth();
-	let posts: PostsWithLikesResult;
-	try {
-		posts = await getPostsWithLikes(session ? Number(session.user?.id) : 0);
-	} catch (err) {
-		console.log(err);
-		return <h1>게시글 로드 중 문제 발생.</h1>;
-	}
+	const userId = session ? Number(session.user?.id) : 0;
+
+	const [allPosts, followingPosts] = await Promise.all([
+		getAllPostsWithLikes(userId).catch(() => []),
+		getFollowingPostsWithLikes(userId).catch(() => []),
+	]);
 
 	if (session)
 		return (
 			<div>
+				<SwitchTabButton />
 				<CreatePost />
-				<PostList posts={posts} />
+				<PostsWrapper
+					allPosts={allPosts}
+					followingPosts={followingPosts}
+				/>
 			</div>
 		);
 

@@ -94,17 +94,15 @@ export async function getUsersWithFollowing(handle: string, sessionId: number) {
 
 	if (!user) return [];
 
-	return user.following.map(({ following }) => {
-		return {
-			handle: following.handle,
-			id: following.id,
-			name: following.name,
-			isFollowing: following.follower.length > 0,
-		};
-	});
+	return user.following.map(({ following }) => ({
+		handle: following.handle,
+		id: following.id,
+		name: following.name,
+		isFollowing: following.follower.length > 0,
+	}));
 }
 
-export type UsersWithFollowing = Awaited<
+export type UsersWithFollowingResult = Awaited<
 	ReturnType<typeof getUsersWithFollowing>
 >;
 
@@ -138,12 +136,10 @@ export async function getUsersWithFollowers(handle: string, sessionId: number) {
 
 	if (!user) return [];
 
-	return user.follower.map(({ follower }) => {
-		return {
-			handle: follower.handle,
-			id: follower.id,
-			name: follower.name,
-			isFollowing: follower.follower.length > 0,
-		};
-	});
+	return user.follower.map(({ follower }) => ({
+		handle: follower.handle,
+		id: follower.id,
+		name: follower.name,
+		isFollowing: follower.follower.length > 0,
+	}));
 }

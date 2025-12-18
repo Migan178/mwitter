@@ -2,7 +2,7 @@ import { UserList } from "@/components/users/UserList";
 import { auth } from "@/lib/auth";
 import {
 	getUsersWithFollowers,
-	type UsersWithFollowing,
+	type UsersWithFollowingResult,
 } from "@/lib/services/user";
 
 export default async function FollowersPage({
@@ -10,7 +10,7 @@ export default async function FollowersPage({
 }: {
 	params: Promise<{ handle: string }>;
 }) {
-	let users: UsersWithFollowing;
+	let users: UsersWithFollowingResult;
 
 	const { handle } = await params;
 	const session = await auth();

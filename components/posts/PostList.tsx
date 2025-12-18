@@ -1,11 +1,7 @@
 import { PostsWithLikesResult } from "@/lib/services/post";
 import Post from "./Post";
 
-export default async function PostList({
-	posts,
-}: {
-	posts: PostsWithLikesResult;
-}) {
+export default function PostList({ posts }: { posts: PostsWithLikesResult }) {
 	return (
 		<ul>
 			{posts.map(post => {

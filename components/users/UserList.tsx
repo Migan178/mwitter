@@ -1,7 +1,7 @@
-import { type UsersWithFollowing } from "@/lib/services/user";
+import { type UsersWithFollowingResult } from "@/lib/services/user";
 import UserListItem from "./UserListItem";
 
-export function UserList({ users }: { users: UsersWithFollowing }) {
+export function UserList({ users }: { users: UsersWithFollowingResult }) {
 	return (
 		<ul>
 			{users.map(user => {
