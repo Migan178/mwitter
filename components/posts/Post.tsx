@@ -7,6 +7,7 @@ import { LikeButton } from "./LikeButton";
 import Username from "../users/Username";
 import Link from "next/link";
 import userMentionRegexp from "@/lib/regex/userMention";
+import hashTagRegexp from "@/lib/regex/hashTag";
 
 export default function Post({
 	user,
@@ -45,6 +46,21 @@ export default function Post({
 								return (
 									<Link
 										href={`/${part.replace("@", "")}`}
+										key={i}
+										className="mr-1 text-blue-500"
+									>
+										{part}
+									</Link>
+								);
+							}
+
+							if (part.match(hashTagRegexp)) {
+								return (
+									<Link
+										href={{
+											pathname: "/search",
+											query: { q: part },
+										}}
 										key={i}
 										className="mr-1 text-blue-500"
 									>
