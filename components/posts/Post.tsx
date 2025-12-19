@@ -6,6 +6,7 @@ import "dayjs/locale/ko";
 import { LikeButton } from "./LikeButton";
 import Username from "../users/Username";
 import Link from "next/link";
+import userMentionRegexp from "@/lib/regex/userMention";
 
 export default function Post({
 	user,
@@ -27,6 +28,8 @@ export default function Post({
 	dayjs.extend(relativeTime);
 	dayjs.locale("ko");
 
+	const parts = content.split(/\ +/g);
+
 	return (
 		<div>
 			<div>
@@ -36,7 +39,23 @@ export default function Post({
 			</div>
 			<div>
 				<Link href={`/${handle}/posts/${id}`}>
-					<h2 className="whitespace-pre-wrap">{content}</h2>
+					<h2 className="whitespace-pre-wrap">
+						{parts.map((part, i) => {
+							if (part.match(userMentionRegexp)) {
+								return (
+									<Link
+										href={`/${part.replace("@", "")}`}
+										key={i}
+										className="mr-1 text-blue-500"
+									>
+										{part}
+									</Link>
+								);
+							}
+
+							return part;
+						})}
+					</h2>
 				</Link>
 			</div>
 			<p>{dayjs(createdAt).fromNow()}</p>
