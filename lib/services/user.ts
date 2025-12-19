@@ -143,3 +143,45 @@ export async function getUsersWithFollowers(handle: string, sessionId: number) {
 		isFollowing: follower.follower.length > 0,
 	}));
 }
+
+export async function getUsersWithIsFollowingByQuery(
+	query: string,
+	sessionId: number,
+) {
+	const users = await prisma.user.findMany({
+		select: {
+			handle: true,
+			id: true,
+			name: true,
+			follower: {
+				select: {
+					followerId: true,
+				},
+				where: {
+					followerId: sessionId,
+				},
+			},
+		},
+		where: {
+			OR: [
+				{
+					name: {
+						contains: query,
+					},
+				},
+				{
+					handle: {
+						contains: query,
+					},
+				},
+			],
+		},
+	});
+
+	return users.map(({ handle, id, name, follower }) => ({
+		handle,
+		id,
+		name,
+		isFollowing: follower.length > 0,
+	}));
+}

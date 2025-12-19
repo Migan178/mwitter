@@ -102,6 +102,30 @@ export async function getPostWithLikes(
 	};
 }
 
+export async function getPostWithLikesByQuery(
+	query: string,
+	sessionId: number,
+): Promise<PostsWithLikesResult> {
+	const posts = await prisma.post.findMany({
+		...getQueryWithLikes(sessionId),
+		where: {
+			content: {
+				contains: query,
+			},
+		},
+	});
+
+	return posts.map(({ id, content, createdAt, _count, likes, author }) => ({
+		id,
+		content,
+		handle: author.handle,
+		authorName: author.name,
+		isLiked: likes.length > 0,
+		likes: _count.likes,
+		createdAt,
+	}));
+}
+
 export type PostsWithLikesResult = Awaited<
 	ReturnType<typeof getAllPostsWithLikes>
 >;

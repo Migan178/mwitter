@@ -2,7 +2,7 @@
 
 import usePostTabStore, { PostTabEnum } from "@/stores/postTab";
 
-export default function SwitchTabButton() {
+export default function SwitchPostsTabButton() {
 	const currentTab = usePostTabStore(state => state.currentTab);
 	const { setAllPosts, setFollowingPosts } = usePostTabStore(
 		state => state.actions,

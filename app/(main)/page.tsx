@@ -1,7 +1,7 @@
 import CreatePost from "@/components/posts/CreatePost";
-import PostList from "@/components/posts/PostList";
 import PostsWrapper from "@/components/posts/PostsWrapper";
-import SwitchTabButton from "@/components/posts/SwitchTabButton";
+import SwitchPostsTabButton from "@/components/posts/SwitchPostsTabButton";
+import SearchBox from "@/components/search/SearchBox";
 import { auth } from "@/lib/auth";
 import {
 	getAllPostsWithLikes,
@@ -20,7 +20,9 @@ export default async function Home() {
 	if (session)
 		return (
 			<div>
-				<SwitchTabButton />
+				{/* TODO: Move search box to nav bar or side bar */}
+				<SearchBox />
+				<SwitchPostsTabButton />
 				<CreatePost />
 				<PostsWrapper
 					allPosts={allPosts}
