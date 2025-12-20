@@ -1,5 +1,5 @@
-import { type UsersWithFollowingResult } from "@/lib/services/user";
 import UserListItem from "./UserListItem";
+import { type UsersWithFollowingResult } from "@/lib/services/user";
 
 export function UserList({ users }: { users: UsersWithFollowingResult }) {
 	return (

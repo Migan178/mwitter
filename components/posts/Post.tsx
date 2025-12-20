@@ -1,13 +1,13 @@
 "use client";
 
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import "dayjs/locale/ko";
-import { LikeButton } from "./LikeButton";
 import Username from "../users/Username";
-import Link from "next/link";
-import userMentionRegexp from "@/lib/regex/userMention";
+import { LikeButton } from "./LikeButton";
 import hashTagRegexp from "@/lib/regex/hashTag";
+import userMentionRegexp from "@/lib/regex/userMention";
+import dayjs from "dayjs";
+import "dayjs/locale/ko";
+import relativeTime from "dayjs/plugin/relativeTime";
+import Link from "next/link";
 
 export default function Post({
 	user,

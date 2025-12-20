@@ -1,10 +1,10 @@
 "use client";
 
+import ContentInput from "./ContentInput";
 import { createPost } from "@/actions/createPost";
 import Form from "next/form";
-import { useActionState, useEffect, useRef, useState } from "react";
-import ContentInput from "./ContentInput";
 import { useRouter } from "next/navigation";
+import { useActionState, useEffect, useRef, useState } from "react";
 
 export default function CreatePost() {
 	const [state, formAction, pending] = useActionState(createPost, null);

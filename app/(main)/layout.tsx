@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
-import LocalFont from "next/font/local";
 import "../globals.css";
 import AuthProvider from "@/components/AuthProvider";
+import LoginButton from "@/components/LoginButton";
 import Navbar from "@/components/Navbar";
 import { auth } from "@/lib/auth";
-import LoginButton from "@/components/LoginButton";
+import type { Metadata } from "next";
+import LocalFont from "next/font/local";
 
 const pretendard = LocalFont({
 	src: "../../public/fonts/pretendard/PretendardVariable.woff2",

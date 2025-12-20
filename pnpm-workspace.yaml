@@ -1,4 +1,4 @@
 onlyBuiltDependencies:
-  - '@prisma/engines'
-  - bcrypt
-  - prisma
+    - "@prisma/engines"
+    - bcrypt
+    - prisma

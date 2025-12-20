@@ -1,8 +1,8 @@
 "use client";
 
+import SearchBox from "./search/SearchBox";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import SearchBox from "./search/SearchBox";
 
 export default function Navbar() {
 	const { data: session } = useSession();

@@ -1,8 +1,8 @@
 "use server";
 
+import { signIn } from "@/lib/auth";
 import { hashPassword } from "@/lib/hash";
 import prisma from "@/lib/prisma";
-import { signIn } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import * as z from "zod";
 

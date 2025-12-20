@@ -1,10 +1,10 @@
 "use client";
 
+import PostList from "../posts/PostList";
+import { UserList } from "../users/UserList";
 import { PostsWithLikesResult } from "@/lib/services/post";
 import { UsersWithFollowingResult } from "@/lib/services/user";
 import useSearchTabStore, { SearchTabEnum } from "@/stores/searchTab";
-import PostList from "../posts/PostList";
-import { UserList } from "../users/UserList";
 
 export default function SearchWrapper({
 	posts,

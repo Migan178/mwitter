@@ -1,6 +1,6 @@
-import Link from "next/link";
-import Username from "./Username";
 import FollowButton from "./FollowButton";
+import Username from "./Username";
+import Link from "next/link";
 
 export default function UserListItem({
 	handle,

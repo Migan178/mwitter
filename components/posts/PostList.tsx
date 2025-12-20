@@ -1,5 +1,5 @@
-import { PostsWithLikesResult } from "@/lib/services/post";
 import Post from "./Post";
+import { PostsWithLikesResult } from "@/lib/services/post";
 
 export default function PostList({ posts }: { posts: PostsWithLikesResult }) {
 	return (

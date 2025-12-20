@@ -1,8 +1,8 @@
 "use client";
 
+import PostList from "./PostList";
 import { type PostsWithLikesResult } from "@/lib/services/post";
 import usePostTabStore, { PostTabEnum } from "@/stores/postTab";
-import PostList from "./PostList";
 
 export default function PostsWrapper({
 	allPosts,
