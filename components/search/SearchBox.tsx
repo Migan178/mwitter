@@ -8,6 +8,7 @@ export default function SearchBox({ defaultValue }: { defaultValue?: string }) {
 					type="text"
 					name="q"
 					placeholder="검색어를 입력"
+					className="placeholder:text-center"
 					defaultValue={defaultValue}
 					required
 				/>

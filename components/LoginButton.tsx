@@ -17,7 +17,7 @@ export default function LoginButton() {
 	return (
 		<div>
 			<button
-				className={className}
+				className={`${className} mr-1`}
 				onClick={() => (window.location.href = "/signup")}
 			>
 				회원가입
