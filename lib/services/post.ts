@@ -102,7 +102,7 @@ export async function getPostWithLikes(
 	};
 }
 
-export async function getPostWithLikesByQuery(
+export async function getPostsWithLikesByQuery(
 	query: string,
 	sessionId: number,
 ): Promise<PostsWithLikesResult> {

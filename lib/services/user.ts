@@ -185,3 +185,21 @@ export async function getUsersWithIsFollowingByQuery(
 		isFollowing: follower.length > 0,
 	}));
 }
+
+export async function getUserById(id: number) {
+	const user = await prisma.user.findUnique({
+		where: {
+			id,
+		},
+		select: {
+			id: true,
+			handle: true,
+			name: true,
+			description: true,
+		},
+	});
+
+	return user;
+}
+
+export type UserResult = Awaited<ReturnType<typeof getUserById>>;

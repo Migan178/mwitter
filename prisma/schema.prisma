@@ -14,17 +14,19 @@ datasource db {
 }
 
 model User {
-    id             Int         @id @default(autoincrement())
-    handle         String      @unique @db.Char(16)
+    id             Int     @id @default(autoincrement())
+    handle         String  @unique @db.Char(16)
     name           String
-    email          String      @unique
-    hashedPassword String      @db.Text
-    posts          Post[]
-    following      Following[] @relation("FollowerToFollowing")
-    follower       Following[] @relation("FollowingToFollower")
-    blocking       Blocking[]  @relation("BlockerToBlocked")
-    blockedBy      Blocking[]  @relation("BlockedToBlocker")
-    likes          Like[]
+    email          String  @unique
+    hashedPassword String  @db.Text
+    description    String? @db.VarChar(300)
+
+    posts     Post[]
+    following Following[] @relation("FollowerToFollowing")
+    follower  Following[] @relation("FollowingToFollower")
+    blocking  Blocking[]  @relation("BlockerToBlocked")
+    blockedBy Blocking[]  @relation("BlockedToBlocker")
+    likes     Like[]
 }
 
 model Following {
