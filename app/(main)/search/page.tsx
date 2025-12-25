@@ -2,7 +2,7 @@ import SearchBox from "@/components/search/SearchBox";
 import SearchWrapper from "@/components/search/SearchWrapper";
 import SwitchSearchTabButton from "@/components/search/SwitchSearchTabButton";
 import { auth } from "@/lib/auth";
-import { getPostsWithLikesByQuery } from "@/lib/services/post";
+import { getPostsWithLikesAndReplyCountByQuery } from "@/lib/services/post";
 import { getUsersWithIsFollowingByQuery } from "@/lib/services/user";
 
 export default async function SearchPage({
@@ -15,7 +15,7 @@ export default async function SearchPage({
 	const { q: query } = await searchParams;
 
 	const [posts, users] = await Promise.all([
-		getPostsWithLikesByQuery(query, userId).catch(() => []),
+		getPostsWithLikesAndReplyCountByQuery(query, userId).catch(() => []),
 		getUsersWithIsFollowingByQuery(query, userId).catch(() => []),
 	]);
 

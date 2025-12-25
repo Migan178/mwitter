@@ -1,11 +1,11 @@
 import LoginButton from "@/components/LoginButton";
-import CreatePost from "@/components/posts/CreatePost";
+import PostCreateBox from "@/components/posts/PostCreateBox";
 import PostsWrapper from "@/components/posts/PostsWrapper";
 import SwitchPostsTabButton from "@/components/posts/SwitchPostsTabButton";
 import { auth } from "@/lib/auth";
 import {
-	getAllPostsWithLikes,
-	getFollowingPostsWithLikes,
+	getAllPostsWithLikesAndReplyCount,
+	getFollowingPostsWithLikesReplyCount,
 } from "@/lib/services/post";
 
 export default async function Home() {
@@ -14,14 +14,14 @@ export default async function Home() {
 		const userId = Number(session.user?.id);
 
 		const [allPosts, followingPosts] = await Promise.all([
-			getAllPostsWithLikes(userId).catch(() => []),
-			getFollowingPostsWithLikes(userId).catch(() => []),
+			getAllPostsWithLikesAndReplyCount(userId).catch(() => []),
+			getFollowingPostsWithLikesReplyCount(userId).catch(() => []),
 		]);
 
 		return (
 			<div>
 				<SwitchPostsTabButton />
-				<CreatePost />
+				<PostCreateBox />
 				<PostsWrapper
 					allPosts={allPosts}
 					followingPosts={followingPosts}

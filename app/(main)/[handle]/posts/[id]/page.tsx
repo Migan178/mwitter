@@ -1,8 +1,8 @@
-import Post from "@/components/posts/Post";
+import PostDetail from "@/components/posts/PostDetail";
 import { auth } from "@/lib/auth";
 import {
-	getPostWithLikes,
-	type PostWithLikesResult,
+	getPostWithLikesAndReplies,
+	type PostWithLikesAndRepliesResult,
 } from "@/lib/services/post";
 
 export default async function PostPage({
@@ -12,10 +12,10 @@ export default async function PostPage({
 }) {
 	const session = await auth();
 	const { id, handle } = await params;
-	let post: PostWithLikesResult;
+	let post: PostWithLikesAndRepliesResult;
 
 	try {
-		post = await getPostWithLikes(
+		post = await getPostWithLikesAndReplies(
 			Number(id),
 			session ? Number(session.user?.id) : 0,
 		);
@@ -28,7 +28,7 @@ export default async function PostPage({
 		return <h1>해당 게시글을 찾을 수 없음.</h1>;
 
 	return (
-		<Post
+		<PostDetail
 			user={post.authorName}
 			handle={post.handle}
 			content={post.content}
@@ -36,6 +36,8 @@ export default async function PostPage({
 			id={post.id}
 			likes={post.likes}
 			liked={post.isLiked}
+			replies={post.replies}
+			replyCount={post.replyCount}
 		/>
 	);
 }

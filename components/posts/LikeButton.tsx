@@ -4,7 +4,7 @@ import { toggleLike } from "@/actions/toggleLike";
 import Form from "next/form";
 import { useState } from "react";
 
-export function LikeButton({
+export default function LikeButton({
 	postId,
 	initialLikes,
 	initialLiked,

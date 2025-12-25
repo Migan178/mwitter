@@ -19,6 +19,7 @@ export default function Navbar() {
 				</Link>
 				<Link href="/settings">설정</Link>
 				<Link href="/notifications">알림</Link>
+				<Link href="/posts/create"></Link>
 			</nav>
 		</aside>
 	);

@@ -6,6 +6,7 @@ import * as z from "zod";
 
 const formSchema = z.object({
 	content: z.string("내용이 없음").trim().min(1),
+	parentId: z.coerce.number().nullable(),
 });
 
 export interface CreatePostResponse {
@@ -17,12 +18,14 @@ export async function createPost(
 	initialState: any,
 	formData: FormData,
 ): Promise<CreatePostResponse> {
+	console.log(formData.get("parentId"));
 	const session = await auth();
 	if (!session || !session.user || !session.user.id)
 		return { success: false, error: "올바르지 않은 사용자" };
 
 	const validatedData = formSchema.safeParse({
 		content: formData.get("content"),
+		parentId: formData.get("parentId"),
 	});
 	if (!validatedData.success)
 		return { success: false, error: validatedData.error.message };
@@ -30,6 +33,7 @@ export async function createPost(
 	try {
 		await prisma.post.create({
 			data: {
+				parentId: validatedData.data.parentId,
 				content: validatedData.data.content,
 				authorId: Number(session.user.id),
 			},

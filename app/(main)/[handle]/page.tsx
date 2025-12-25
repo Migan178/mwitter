@@ -4,7 +4,7 @@ import FollowButton from "@/components/users/FollowButton";
 import LoginToFollowButton from "@/components/users/LoginToFollowButton";
 import UserInfo from "@/components/users/UserInfo";
 import { auth } from "@/lib/auth";
-import { type PostsWithLikesResult } from "@/lib/services/post";
+import { type PostsWithLikesAndReplyCountResult } from "@/lib/services/post";
 import {
 	getUserByHandleWithCountsAndPosts,
 	type UserByHandleWithCountsAndPostsResult,
@@ -40,7 +40,7 @@ export default async function User({
 		else showFollowButton = true;
 	else showLoginToFollowButton = true;
 
-	const posts: PostsWithLikesResult = user.posts.map(
+	const posts: PostsWithLikesAndReplyCountResult = user.posts.map(
 		({ id, content, likes, createdAt, _count }) => {
 			return {
 				id,

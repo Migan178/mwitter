@@ -1,7 +1,11 @@
 import Post from "./Post";
-import { PostsWithLikesResult } from "@/lib/services/post";
+import { PostsWithLikesAndReplyCountResult } from "@/lib/services/post";
 
-export default function PostList({ posts }: { posts: PostsWithLikesResult }) {
+export default function PostList({
+	posts,
+}: {
+	posts: PostsWithLikesAndReplyCountResult;
+}) {
 	return (
 		<ul>
 			{posts.map(post => {
@@ -15,6 +19,7 @@ export default function PostList({ posts }: { posts: PostsWithLikesResult }) {
 							id={post.id}
 							likes={post.likes}
 							liked={post.isLiked}
+							replies={post.replies}
 						/>
 					</li>
 				);

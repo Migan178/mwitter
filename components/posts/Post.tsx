@@ -1,13 +1,15 @@
-"use client";
-
 import Username from "../users/Username";
-import { LikeButton } from "./LikeButton";
-import hashTagRegexp from "@/lib/regex/hashTag";
-import userMentionRegexp from "@/lib/regex/userMention";
-import dayjs from "dayjs";
+import LikeButton from "./LikeButton";
+import PostContent from "./PostContent";
+import PostCreatedAt from "./PostCreatedAt";
+import ReplyButton from "./ReplyButton";
+import { type PostDataProps } from "./types/postDataProps";
 import "dayjs/locale/ko";
-import relativeTime from "dayjs/plugin/relativeTime";
 import Link from "next/link";
+
+export interface PostDataWithReplyCountProps extends PostDataProps {
+	replies: number;
+}
 
 export default function Post({
 	user,
@@ -17,20 +19,8 @@ export default function Post({
 	id,
 	likes,
 	liked,
-}: {
-	user: string;
-	handle: string;
-	content: string;
-	createdAt: Date;
-	id: number;
-	likes: number;
-	liked: boolean;
-}) {
-	dayjs.extend(relativeTime);
-	dayjs.locale("ko");
-
-	const parts = content.split(/\ +/g);
-
+	replies,
+}: PostDataWithReplyCountProps) {
 	return (
 		<div>
 			<div>
@@ -40,42 +30,14 @@ export default function Post({
 			</div>
 			<div>
 				<Link href={`/${handle}/posts/${id}`}>
-					<h2 className="whitespace-pre-wrap">
-						{parts.map((part, i) => {
-							if (part.match(userMentionRegexp)) {
-								return (
-									<Link
-										href={`/${part.replace("@", "")}`}
-										key={i}
-										className="mr-1 text-blue-500"
-									>
-										{part}
-									</Link>
-								);
-							}
-
-							if (part.match(hashTagRegexp)) {
-								return (
-									<Link
-										href={{
-											pathname: "/search",
-											query: { q: part },
-										}}
-										key={i}
-										className="mr-1 text-blue-500"
-									>
-										{part}
-									</Link>
-								);
-							}
-
-							return part;
-						})}
-					</h2>
+					<PostContent content={content} />
 				</Link>
 			</div>
-			<p>{dayjs(createdAt).fromNow()}</p>
 			<div>
+				<PostCreatedAt createdAt={createdAt} />
+			</div>
+			<div>
+				<ReplyButton postId={id} replies={replies} />
 				<LikeButton
 					postId={id}
 					initialLiked={liked}
