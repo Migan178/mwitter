@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
-body {
-	font-family: var(--font-pretendard);
+@layer base {
+	body {
+		font-family: var(--font-pretendard);
+	}
+
+	button:not(:disabled) {
+		@apply hover:cursor-pointer;
+	}
 }

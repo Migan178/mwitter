@@ -8,16 +8,11 @@ export interface CreatePostStatus {
 	setPostId: (postId: number | null) => void;
 }
 
-const useCreatePostStatusState = create<CreatePostStatus>()(
-	persist(
-		set => ({
-			content: "",
-			postId: null,
-			setContent: content => set(() => ({ content })),
-			setPostId: postId => set(() => ({ postId })),
-		}),
-		{ name: "create-post-status" },
-	),
-);
+const useCreatePostStatusState = create<CreatePostStatus>(set => ({
+	content: "",
+	postId: null,
+	setContent: content => set(() => ({ content })),
+	setPostId: postId => set(() => ({ postId })),
+}));
 
 export default useCreatePostStatusState;

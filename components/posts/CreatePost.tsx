@@ -1,55 +1,91 @@
 "use client";
 
 import ContentInput from "./ContentInput";
+import Drafts from "./drafts/Drafts";
+import SaveDraft from "./drafts/SaveDraft";
 import { createPost } from "@/actions/createPost";
 import useCreatePostStatusState from "@/stores/createPostStatus";
+import useDraftStore from "@/stores/drafts";
 import Form from "next/form";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useRef, useState } from "react";
 
-export default function CreatePost({ className }: { className?: string }) {
+export default function CreatePost() {
 	const [state, formAction, pending] = useActionState(createPost, null);
 	const parentId = useCreatePostStatusState(state => state.postId);
 	const globalContent = useCreatePostStatusState(state => state.content);
-	const setGlobalContent = useCreatePostStatusState(
-		state => state.setContent,
-	);
-	const [localContent, setLocalContent] = useState(globalContent);
+	const [localContent, setLocalContent] = useState("");
+	const [showSaveDraft, setShowSaveDraft] = useState(false);
+	const [showDrafts, setShowDrafts] = useState(false);
+	const drafts = useDraftStore(state => state.drafts);
 
 	const formRef = useRef<HTMLFormElement>(null);
 	const router = useRouter();
 
 	useEffect(() => {
 		if (state?.success) {
-			setGlobalContent("");
+			setLocalContent("");
 
 			formRef.current?.reset();
 			router.back();
 		}
 	}, [state]);
 
-	function setContent(content: string) {
-		setLocalContent(content);
-		setGlobalContent(content);
+	useEffect(() => {
+		setLocalContent(globalContent);
+	}, [globalContent]);
+
+	function backButton() {
+		if (localContent) {
+			setShowSaveDraft(true);
+			return;
+		}
+
+		router.back();
 	}
 
 	return (
-		<Form ref={formRef} action={formAction} className={className}>
-			{parentId ? (
-				<input type="hidden" name="parentId" value={parentId} />
-			) : null}
-			<ContentInput content={localContent} setContent={setContent} />
-			<div>
-				<input
-					type="submit"
-					value="작성"
-					className="hover:cursor-pointer"
-					disabled={pending}
-				/>
+		<>
+			<div className="bg-white p-8">
+				<div className="flex justify-between">
+					<div>
+						<button onClick={backButton}>닫기</button>
+					</div>
+					<div className="flex gap-2">
+						{drafts.length > 0 ? (
+							<div>
+								<button onClick={() => setShowDrafts(true)}>
+									임시 저장 목록
+								</button>
+							</div>
+						) : null}
+						<div>
+							<input
+								type="submit"
+								value="작성"
+								disabled={pending}
+								form="create-post"
+							/>
+						</div>
+					</div>
+				</div>
+				<Form ref={formRef} action={formAction} id="create-post">
+					{parentId ? (
+						<input type="hidden" name="parentId" value={parentId} />
+					) : null}
+					<ContentInput
+						content={localContent}
+						setContent={setLocalContent}
+					/>
+					{state && !state?.success ? (
+						<p className="text-red-500">{state?.error}</p>
+					) : null}
+				</Form>
 			</div>
-			{state && !state?.success ? (
-				<p className="text-red-500">{state?.error}</p>
+			{showSaveDraft ? (
+				<SaveDraft content={localContent} parentId={parentId} />
 			) : null}
-		</Form>
+			{showDrafts ? <Drafts setShowDrafts={setShowDrafts} /> : null}
+		</>
 	);
 }

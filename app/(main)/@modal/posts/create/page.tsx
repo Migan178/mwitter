@@ -11,7 +11,7 @@ export default function CreatePostPage() {
 
 	return (
 		<Modal>
-			<CreatePost className="bg-white" />
+			<CreatePost />
 		</Modal>
 	);
 }
