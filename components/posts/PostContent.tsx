@@ -15,7 +15,7 @@ export default function PostContent({ content }: { content: string }) {
 							key={i}
 							className="mr-1 text-blue-500"
 						>
-							{part}
+							{`${part} `}
 						</Link>
 					);
 				}
@@ -28,14 +28,14 @@ export default function PostContent({ content }: { content: string }) {
 								query: { q: part },
 							}}
 							key={i}
-							className="mr-1 text-blue-500"
+							className="text-blue-500"
 						>
-							{part}
+							{`${part} `}
 						</Link>
 					);
 				}
 
-				return part;
+				return `${part} `;
 			})}
 		</p>
 	);
