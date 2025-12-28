@@ -13,6 +13,7 @@ export default function PostList({
 					<li key={post.id}>
 						<Post
 							user={post.authorName}
+							authorId={post.authorId}
 							handle={post.handle}
 							content={post.content}
 							createdAt={post.createdAt}
