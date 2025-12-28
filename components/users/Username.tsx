@@ -6,8 +6,8 @@ export default function Username({
 	handle: string;
 }) {
 	return (
-		<div className="flex">
-			<h1 className="mr-1">{name}</h1>
+		<div className="flex gap-x-1">
+			<h1>{name}</h1>
 			<h2>@{handle}</h2>
 		</div>
 	);

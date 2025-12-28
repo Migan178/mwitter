@@ -58,26 +58,30 @@ export default async function User({
 	);
 
 	return (
-		<div className="flex">
+		<div>
 			<div>
-				<UserInfo
-					name={user.name}
-					handle={handle}
-					description={user.description}
-					followers={user.follower}
-					following={user.following}
-					posts={user.posts.length}
-				/>
-				{showEditProfileButton ? <EditProfileButton /> : null}
-				{showFollowButton ? (
-					<FollowButton
-						userId={user.id}
-						initialIsFollowing={user.isFollowing}
+				<div className="fixed w-50">
+					<UserInfo
+						name={user.name}
+						handle={handle}
+						description={user.description}
+						followers={user.follower}
+						following={user.following}
+						posts={user.posts.length}
 					/>
-				) : null}
-				{showLoginToFollowButton ? <LoginToFollowButton /> : null}
+					{showEditProfileButton ? <EditProfileButton /> : null}
+					{showFollowButton ? (
+						<FollowButton
+							userId={user.id}
+							initialIsFollowing={user.isFollowing}
+						/>
+					) : null}
+					{showLoginToFollowButton ? <LoginToFollowButton /> : null}
+				</div>
+				<div className="ml-50">
+					<PostList posts={posts} />
+				</div>
 			</div>
-			<PostList posts={posts} />
 		</div>
 	);
 }
