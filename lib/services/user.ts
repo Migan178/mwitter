@@ -38,6 +38,7 @@ export async function getUserByHandleWithCountsAndPosts(
 					_count: {
 						select: {
 							likes: true,
+							replies: true,
 						},
 					},
 				},

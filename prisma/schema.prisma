@@ -21,12 +21,18 @@ model User {
     hashedPassword String  @db.Text
     description    String? @db.VarChar(300)
 
-    posts     Post[]
+    posts Post[]
+
     following Following[] @relation("FollowerToFollowing")
     follower  Following[] @relation("FollowingToFollower")
-    blocking  Blocking[]  @relation("BlockerToBlocked")
-    blockedBy Blocking[]  @relation("BlockedToBlocker")
-    likes     Like[]
+
+    blocking  Blocking[] @relation("BlockerToBlocked")
+    blockedBy Blocking[] @relation("BlockedToBlocker")
+
+    likes Like[]
+
+    notifications     Notification[] @relation("ReceivedNotifications")
+    sentNotifications Notification[] @relation("SentNotifications")
 }
 
 model Following {
@@ -65,7 +71,8 @@ model Post {
     parentId Int?
     parent   Post? @relation("Parent", fields: [parentId], references: [id])
 
-    replies Post[] @relation("Parent")
+    replies       Post[]         @relation("Parent")
+    notifications Notification[]
 }
 
 model Like {
@@ -77,4 +84,28 @@ model Like {
     liker User @relation(fields: [likerId], references: [id])
 
     @@id([postId, likerId])
+}
+
+enum NotificationType {
+    REPLY
+    LIKE
+    REPOST
+    FOLLOW
+    MENTION
+}
+
+model Notification {
+    id        Int              @id @default(autoincrement())
+    type      NotificationType
+    isRead    Boolean          @default(false)
+    createdAt DateTime         @default(now())
+
+    sender   User @relation("SentNotifications", fields: [senderId], references: [id])
+    senderId Int
+
+    recipient   User @relation("ReceivedNotifications", fields: [recipientId], references: [id])
+    recipientId Int
+
+    post   Post? @relation(fields: [postId], references: [id])
+    postId Int?
 }

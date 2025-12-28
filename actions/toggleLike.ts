@@ -5,12 +5,15 @@ import prisma from "@/lib/prisma";
 
 export async function toggleLike(formData: FormData) {
 	const session = await auth();
-	const postId = formData.get("postId");
-	if (!session || !postId) return;
+	const postId = Number(formData.get("postId"));
+	const authorId = Number(formData.get("authorId"));
+	if (!session || isNaN(postId) || isNaN(authorId)) return;
+
+	const userId = Number(session.user?.id);
 
 	const data = {
-		likerId: Number(session.user?.id),
-		postId: Number(postId),
+		likerId: userId,
+		postId,
 	};
 	try {
 		const like = await prisma.like.findUnique({
@@ -25,10 +28,28 @@ export async function toggleLike(formData: FormData) {
 					postId_likerId: data,
 				},
 			});
+
+			await prisma.notification.deleteMany({
+				where: {
+					senderId: userId,
+					recipientId: authorId,
+					type: "LIKE",
+					postId,
+				},
+			});
 			return;
 		}
 
 		await prisma.like.create({ data });
+
+		await prisma.notification.create({
+			data: {
+				senderId: userId,
+				recipientId: authorId,
+				type: "LIKE",
+				postId,
+			},
+		});
 	} catch (err) {
 		console.log(err);
 	}

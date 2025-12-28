@@ -47,7 +47,9 @@ export default async function User({
 				content,
 				handle,
 				authorName: user.name,
+				authorId: user.id,
 				likes: _count.likes,
+				replies: _count.replies,
 				createdAt,
 				isLiked: likes.length > 0,
 			};

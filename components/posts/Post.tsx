@@ -12,6 +12,7 @@ export interface PostDataWithReplyCountProps extends PostDataProps {
 }
 
 export default function Post({
+	authorId,
 	user,
 	handle,
 	content,
@@ -39,6 +40,7 @@ export default function Post({
 			<div>
 				<ReplyButton postId={id} replies={replies} />
 				<LikeButton
+					authorId={authorId}
 					postId={id}
 					initialLiked={liked}
 					initialLikes={likes}

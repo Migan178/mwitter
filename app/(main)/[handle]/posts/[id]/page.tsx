@@ -30,6 +30,7 @@ export default async function PostPage({
 	return (
 		<PostDetail
 			user={post.authorName}
+			authorId={post.authorId}
 			handle={post.handle}
 			content={post.content}
 			createdAt={post.createdAt}

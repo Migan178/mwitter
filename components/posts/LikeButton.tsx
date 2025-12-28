@@ -5,10 +5,12 @@ import Form from "next/form";
 import { useState } from "react";
 
 export default function LikeButton({
+	authorId,
 	postId,
 	initialLikes,
 	initialLiked,
 }: {
+	authorId: number;
 	postId: number;
 	initialLikes: number;
 	initialLiked: boolean;
@@ -30,6 +32,7 @@ export default function LikeButton({
 	return (
 		<Form action={toggleLike}>
 			<input type="hidden" value={postId} name="postId" />
+			<input type="hidden" value={authorId} name="authorId" />
 			<button
 				type="submit"
 				className="hover:cursor-pointer"

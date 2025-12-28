@@ -1,12 +1,13 @@
 import prisma from "../prisma";
 
-function getQueryWithLikesAndReplyCount(userId: number) {
+export function getQueryWithLikesAndReplyCount(userId: number) {
 	return {
 		id: true,
 		content: true,
 		createdAt: true,
 		author: {
 			select: {
+				id: true,
 				name: true,
 				handle: true,
 			},
@@ -44,6 +45,7 @@ export async function getAllPostsWithLikesAndReplyCount(userId: number) {
 		content,
 		handle: author.handle,
 		authorName: author.name,
+		authorId: author.id,
 		isLiked: likes.length > 0,
 		likes: _count.likes,
 		replies: _count.replies,
@@ -75,6 +77,7 @@ export async function getFollowingPostsWithLikesReplyCount(userId: number) {
 		content,
 		handle: author.handle,
 		authorName: author.name,
+		authorId: author.id,
 		isLiked: likes.length > 0,
 		likes: _count.likes,
 		replies: _count.replies,
@@ -104,6 +107,7 @@ export async function getPostWithLikesAndReplies(id: number, userId: number) {
 		content: post.content,
 		handle: post.author.handle,
 		authorName: post.author.name,
+		authorId: post.author.id,
 		isLiked: post.likes.length > 0,
 		likes: post._count.likes,
 		replyCount: post._count.replies,
@@ -113,6 +117,7 @@ export async function getPostWithLikesAndReplies(id: number, userId: number) {
 				content,
 				handle: author.handle,
 				authorName: author.name,
+				authorId: author.id,
 				isLiked: likes.length > 0,
 				likes: _count.likes,
 				replies: _count.replies,
@@ -144,6 +149,7 @@ export async function getPostsWithLikesAndReplyCountByQuery(
 		content,
 		handle: author.handle,
 		authorName: author.name,
+		authorId: author.id,
 		isLiked: likes.length > 0,
 		likes: _count.likes,
 		replies: _count.replies,
