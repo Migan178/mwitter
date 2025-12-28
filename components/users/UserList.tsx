@@ -11,6 +11,7 @@ export function UserList({ users }: { users: UsersWithFollowingResult }) {
 							name={user.name}
 							handle={user.handle}
 							id={user.id}
+							description={user.description}
 							isFollowing={user.isFollowing}
 						/>
 					</li>

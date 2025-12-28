@@ -18,6 +18,7 @@ export async function getNotificationsByRecipientId(recipientId: number) {
 					id: true,
 					name: true,
 					handle: true,
+					description: true,
 					follower: {
 						select: {
 							followerId: true,
@@ -42,6 +43,7 @@ export async function getNotificationsByRecipientId(recipientId: number) {
 			id: sender.id,
 			name: sender.name,
 			handle: sender.handle,
+			description: sender.description,
 			isFollowing: sender.follower.length > 0,
 		},
 		post: post

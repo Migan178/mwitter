@@ -9,6 +9,7 @@ export async function getUserByHandleWithCountsAndPosts(
 		select: {
 			id: true,
 			name: true,
+			description: true,
 			follower: {
 				select: {
 					followerId: true,
@@ -39,6 +40,7 @@ export async function getUserByHandleWithCountsAndPosts(
 	return {
 		name: user.name,
 		id: user.id,
+		description: user.description,
 		posts: user.posts,
 		follower: user._count.follower,
 		following: user._count.following,
@@ -60,6 +62,7 @@ export async function getUsersWithFollowing(handle: string, sessionId: number) {
 							id: true,
 							handle: true,
 							name: true,
+							description: true,
 							follower: {
 								select: {
 									followerId: true,
@@ -84,6 +87,7 @@ export async function getUsersWithFollowing(handle: string, sessionId: number) {
 		handle: following.handle,
 		id: following.id,
 		name: following.name,
+		description: following.description,
 		isFollowing: following.follower.length > 0,
 	}));
 }
@@ -102,6 +106,7 @@ export async function getUsersWithFollowers(handle: string, sessionId: number) {
 							id: true,
 							handle: true,
 							name: true,
+							description: true,
 							follower: {
 								select: {
 									followerId: true,
@@ -126,6 +131,7 @@ export async function getUsersWithFollowers(handle: string, sessionId: number) {
 		handle: follower.handle,
 		id: follower.id,
 		name: follower.name,
+		description: follower.description,
 		isFollowing: follower.follower.length > 0,
 	}));
 }
@@ -139,6 +145,7 @@ export async function getUsersWithIsFollowingByQuery(
 			handle: true,
 			id: true,
 			name: true,
+			description: true,
 			follower: {
 				select: {
 					followerId: true,
@@ -164,10 +171,11 @@ export async function getUsersWithIsFollowingByQuery(
 		},
 	});
 
-	return users.map(({ handle, id, name, follower }) => ({
+	return users.map(({ handle, id, name, follower, description }) => ({
 		handle,
 		id,
 		name,
+		description,
 		isFollowing: follower.length > 0,
 	}));
 }

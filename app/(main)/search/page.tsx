@@ -11,7 +11,9 @@ export default async function SearchPage({
 	searchParams: Promise<{ q: string }>;
 }) {
 	const session = await auth();
-	const userId = session ? Number(session.user?.id) : 0;
+	if (!session) return <h1>로그인 필요</h1>;
+
+	const userId = Number(session.user?.id);
 	const { q: query } = await searchParams;
 
 	const [posts, users] = await Promise.all([

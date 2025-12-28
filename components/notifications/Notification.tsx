@@ -19,6 +19,7 @@ export default function Notification({
 		id: number;
 		handle: string;
 		name: string;
+		description: string | null;
 	};
 }) {
 	return (
@@ -41,6 +42,7 @@ export default function Notification({
 								handle={sender.handle}
 								name={sender.name}
 								id={sender.id}
+								description={sender.description}
 								isFollowing={sender.isFollowing}
 							/>
 						</div>

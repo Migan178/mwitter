@@ -63,6 +63,7 @@ export default async function User({
 				<UserInfo
 					name={user.name}
 					handle={handle}
+					description={user.description}
 					followers={user.follower}
 					following={user.following}
 					posts={user.posts.length}
