@@ -41,7 +41,7 @@ export default async function User({
 	else showLoginToFollowButton = true;
 
 	const posts: PostsWithLikesAndReplyCountResult = user.posts.map(
-		({ id, content, likes, createdAt, _count }) => {
+		({ id, content, likes, createdAt, _count, parent }) => {
 			return {
 				id,
 				content,
@@ -51,6 +51,7 @@ export default async function User({
 				likes: _count.likes,
 				replies: _count.replies,
 				createdAt,
+				parentAuthor: parent?.author.handle,
 				isLiked: likes.length > 0,
 			};
 		},

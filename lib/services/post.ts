@@ -12,6 +12,15 @@ export function getQueryWithLikesAndReplyCount(userId: number) {
 				handle: true,
 			},
 		},
+		parent: {
+			select: {
+				author: {
+					select: {
+						handle: true,
+					},
+				},
+			},
+		},
 		likes: {
 			select: {
 				likerId: true,
@@ -40,17 +49,20 @@ export async function getAllPostsWithLikesAndReplyCount(userId: number) {
 		},
 	});
 
-	return posts.map(({ id, content, createdAt, _count, likes, author }) => ({
-		id,
-		content,
-		handle: author.handle,
-		authorName: author.name,
-		authorId: author.id,
-		isLiked: likes.length > 0,
-		likes: _count.likes,
-		replies: _count.replies,
-		createdAt,
-	}));
+	return posts.map(
+		({ id, content, createdAt, _count, likes, author, parent }) => ({
+			id,
+			content,
+			handle: author.handle,
+			authorName: author.name,
+			authorId: author.id,
+			isLiked: likes.length > 0,
+			likes: _count.likes,
+			replies: _count.replies,
+			parentAuthor: parent?.author.handle,
+			createdAt,
+		}),
+	);
 }
 
 export async function getFollowingPostsWithLikesReplyCount(userId: number) {
@@ -72,17 +84,20 @@ export async function getFollowingPostsWithLikesReplyCount(userId: number) {
 		},
 	});
 
-	return posts.map(({ id, content, createdAt, _count, likes, author }) => ({
-		id,
-		content,
-		handle: author.handle,
-		authorName: author.name,
-		authorId: author.id,
-		isLiked: likes.length > 0,
-		likes: _count.likes,
-		replies: _count.replies,
-		createdAt,
-	}));
+	return posts.map(
+		({ id, content, createdAt, _count, likes, author, parent }) => ({
+			id,
+			content,
+			handle: author.handle,
+			authorName: author.name,
+			authorId: author.id,
+			isLiked: likes.length > 0,
+			likes: _count.likes,
+			replies: _count.replies,
+			parentAuthor: parent?.author.handle,
+			createdAt,
+		}),
+	);
 }
 
 export async function getPostWithLikesAndReplies(id: number, userId: number) {
@@ -111,8 +126,9 @@ export async function getPostWithLikesAndReplies(id: number, userId: number) {
 		isLiked: post.likes.length > 0,
 		likes: post._count.likes,
 		replyCount: post._count.replies,
+		parentAuthor: post.parent?.author.handle,
 		replies: post.replies.map(
-			({ id, content, createdAt, _count, likes, author }) => ({
+			({ id, content, createdAt, _count, likes, author, parent }) => ({
 				id,
 				content,
 				handle: author.handle,
@@ -121,6 +137,7 @@ export async function getPostWithLikesAndReplies(id: number, userId: number) {
 				isLiked: likes.length > 0,
 				likes: _count.likes,
 				replies: _count.replies,
+				parentAuthor: parent?.author.handle,
 				createdAt,
 			}),
 		),
@@ -144,17 +161,20 @@ export async function getPostsWithLikesAndReplyCountByQuery(
 		},
 	});
 
-	return posts.map(({ id, content, createdAt, _count, likes, author }) => ({
-		id,
-		content,
-		handle: author.handle,
-		authorName: author.name,
-		authorId: author.id,
-		isLiked: likes.length > 0,
-		likes: _count.likes,
-		replies: _count.replies,
-		createdAt,
-	}));
+	return posts.map(
+		({ id, content, createdAt, _count, likes, author, parent }) => ({
+			id,
+			content,
+			handle: author.handle,
+			authorName: author.name,
+			authorId: author.id,
+			isLiked: likes.length > 0,
+			likes: _count.likes,
+			replies: _count.replies,
+			parentAuthor: parent?.author.handle,
+			createdAt,
+		}),
+	);
 }
 
 export type PostsWithLikesAndReplyCountResult = Awaited<

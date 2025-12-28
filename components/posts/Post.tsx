@@ -3,6 +3,7 @@ import LikeButton from "./LikeButton";
 import PostContent from "./PostContent";
 import PostCreatedAt from "./PostCreatedAt";
 import ReplyButton from "./ReplyButton";
+import ReplyTo from "./ReplyTo";
 import { type PostDataProps } from "./types/postDataProps";
 import "dayjs/locale/ko";
 import Link from "next/link";
@@ -21,9 +22,15 @@ export default function Post({
 	likes,
 	liked,
 	replies,
+	reply,
 }: PostDataWithReplyCountProps) {
 	return (
 		<div>
+			{reply ? (
+				<div>
+					<ReplyTo reply={reply} />
+				</div>
+			) : null}
 			<div>
 				<Link href={`/${handle}`}>
 					<Username name={user} handle={handle} />

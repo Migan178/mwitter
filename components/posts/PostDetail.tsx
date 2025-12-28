@@ -5,6 +5,7 @@ import PostCreateBox from "./PostCreateBox";
 import PostCreatedAt from "./PostCreatedAt";
 import PostList from "./PostList";
 import ReplyButton from "./ReplyButton";
+import ReplyTo from "./ReplyTo";
 import { type PostDataProps } from "./types/postDataProps";
 import { type PostsWithLikesAndReplyCountResult } from "@/lib/services/post";
 
@@ -24,9 +25,15 @@ export default function PostDetail({
 	liked,
 	replies,
 	replyCount,
+	reply,
 }: PostDataWithRepliesProps) {
 	return (
 		<div>
+			{reply ? (
+				<div>
+					<ReplyTo reply={reply} />
+				</div>
+			) : null}
 			<div>
 				<Username name={user} handle={handle} />
 			</div>

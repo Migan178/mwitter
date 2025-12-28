@@ -38,6 +38,7 @@ export default async function PostPage({
 			likes={post.likes}
 			liked={post.isLiked}
 			replies={post.replies}
+			reply={post.parentAuthor}
 			replyCount={post.replyCount}
 		/>
 	);

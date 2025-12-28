@@ -56,6 +56,7 @@ export default function Notification({
 						createdAt={post?.createdAt!}
 						likes={post?.likes!}
 						liked={post?.liked!}
+						reply={post?.reply}
 						replies={post?.replies!}
 					/>
 				) : null}

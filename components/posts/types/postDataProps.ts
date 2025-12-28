@@ -7,4 +7,8 @@ export interface PostDataProps {
 	id: number;
 	likes: number;
 	liked: boolean;
+	/**
+	 * @description A user's handle who created parent post
+	 */
+	reply?: string;
 }

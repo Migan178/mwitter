@@ -1,4 +1,5 @@
 import prisma from "../prisma";
+import { getQueryWithLikesAndReplyCount } from "./post";
 
 export async function getUserByHandleWithCountsAndPosts(
 	handle: string,
@@ -24,23 +25,7 @@ export async function getUserByHandleWithCountsAndPosts(
 			},
 			posts: {
 				select: {
-					id: true,
-					content: true,
-					createdAt: true,
-					likes: {
-						select: {
-							likerId: true,
-						},
-						where: {
-							likerId: sessionUserId,
-						},
-					},
-					_count: {
-						select: {
-							likes: true,
-							replies: true,
-						},
-					},
+					...getQueryWithLikesAndReplyCount(sessionUserId),
 				},
 			},
 		},

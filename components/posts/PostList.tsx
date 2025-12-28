@@ -20,6 +20,7 @@ export default function PostList({
 							id={post.id}
 							likes={post.likes}
 							liked={post.isLiked}
+							reply={post.parentAuthor}
 							replies={post.replies}
 						/>
 					</li>
