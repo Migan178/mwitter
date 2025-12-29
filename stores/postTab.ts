@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export enum PostTabEnum {
 	All = 0,
@@ -7,19 +8,20 @@ export enum PostTabEnum {
 
 export interface PostTab {
 	currentTab: PostTabEnum;
-	actions: {
-		setAllPosts: () => void;
-		setFollowingPosts: () => void;
-	};
+	setAllPosts: () => void;
+	setFollowingPosts: () => void;
 }
 
-const usePostTabStore = create<PostTab>(set => ({
-	currentTab: PostTabEnum.All,
-	actions: {
-		setAllPosts: () => set(() => ({ currentTab: PostTabEnum.All })),
-		setFollowingPosts: () =>
-			set(() => ({ currentTab: PostTabEnum.Following })),
-	},
-}));
+const usePostTabStore = create<PostTab>()(
+	persist(
+		set => ({
+			currentTab: PostTabEnum.All,
+			setAllPosts: () => set(() => ({ currentTab: PostTabEnum.All })),
+			setFollowingPosts: () =>
+				set(() => ({ currentTab: PostTabEnum.Following })),
+		}),
+		{ name: "main-post-tab" },
+	),
+);
 
 export default usePostTabStore;

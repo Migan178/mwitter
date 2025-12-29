@@ -4,9 +4,8 @@ import usePostTabStore, { PostTabEnum } from "@/stores/postTab";
 
 export default function SwitchPostsTabButton() {
 	const currentTab = usePostTabStore(state => state.currentTab);
-	const { setAllPosts, setFollowingPosts } = usePostTabStore(
-		state => state.actions,
-	);
+	const setAllPosts = usePostTabStore(state => state.setAllPosts);
+	const setFollowingPosts = usePostTabStore(state => state.setFollowingPosts);
 
 	return (
 		<div className="flex gap-x-1">
