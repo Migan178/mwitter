@@ -2,16 +2,16 @@
 
 import PostList from "../posts/PostList";
 import { UserList } from "../users/UserList";
-import { PostsWithLikesAndReplyCountResult } from "@/lib/services/post";
-import { UsersWithFollowingResult } from "@/lib/services/user";
+import { type PostResult } from "@/lib/services/post";
+import { type UserResult } from "@/lib/services/user";
 import useSearchTabStore, { SearchTabEnum } from "@/stores/searchTab";
 
 export default function SearchWrapper({
 	posts,
 	users,
 }: {
-	posts: PostsWithLikesAndReplyCountResult;
-	users: UsersWithFollowingResult;
+	posts: PostResult[];
+	users: UserResult[];
 }) {
 	const currentTab = useSearchTabStore(state => state.currentTab);
 

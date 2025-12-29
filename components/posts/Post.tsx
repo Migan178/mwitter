@@ -4,40 +4,75 @@ import PostContent from "./PostContent";
 import PostCreatedAt from "./PostCreatedAt";
 import ReplyButton from "./ReplyButton";
 import ReplyTo from "./ReplyTo";
-import { type PostDataProps } from "./types/postDataProps";
+import RepostButton from "./RepostButton";
+import RepostedBy from "./RepostedBy";
+import { type PostWithOriginalResult } from "@/lib/services/post";
 import "dayjs/locale/ko";
 import Link from "next/link";
 
-export interface PostDataWithReplyCountProps extends PostDataProps {
-	replies: number;
-}
-
 export default function Post({
-	authorId,
-	user,
-	handle,
-	content,
-	createdAt,
-	id,
-	likes,
-	liked,
-	replies,
-	reply,
-}: PostDataWithReplyCountProps) {
+	post: {
+		author,
+		content,
+		createdAt,
+		id,
+		isLiked,
+		isReposted,
+		likeCount,
+		replyCount,
+		repostCount,
+		parentAuthor,
+		original,
+	},
+}: {
+	post: PostWithOriginalResult;
+}) {
+	let repostId = 0;
+	let repostedBy = {
+		name: "",
+		id: 0,
+		handle: "",
+	};
+
+	if (original) {
+		repostId = id;
+		repostedBy = author;
+		author = original.author;
+		content = original.content;
+		createdAt = original.createdAt;
+		id = original.id;
+		likeCount = original.likeCount;
+		isLiked = original.isLiked;
+		isReposted = original.isReposted;
+		replyCount = original.replyCount;
+		repostCount = original.repostCount;
+		parentAuthor = original.parentAuthor;
+	}
+
 	return (
 		<div>
-			{reply ? (
+			{original ? (
 				<div>
-					<ReplyTo reply={reply} />
+					<RepostedBy
+						name={repostedBy.name}
+						handle={repostedBy.handle}
+					/>
+				</div>
+			) : null}
+			{parentAuthor ? (
+				<div>
+					<ReplyTo reply={parentAuthor} />
 				</div>
 			) : null}
 			<div>
-				<Link href={`/${handle}`}>
-					<Username name={user} handle={handle} />
+				<Link href={`/${author.handle}`}>
+					<Username name={author.name} handle={author.handle} />
 				</Link>
 			</div>
 			<div>
-				<Link href={`/${handle}/posts/${id}`}>
+				<Link
+					href={`/${original ? repostedBy.handle : author.handle}/posts/${original ? repostId : id}`}
+				>
 					<PostContent content={content} />
 				</Link>
 			</div>
@@ -45,12 +80,18 @@ export default function Post({
 				<PostCreatedAt createdAt={createdAt} />
 			</div>
 			<div>
-				<ReplyButton postId={id} replies={replies} />
+				<ReplyButton postId={id} replies={replyCount} />
 				<LikeButton
-					authorId={authorId}
+					authorId={author.id}
 					postId={id}
-					initialLiked={liked}
-					initialLikes={likes}
+					initialLiked={isLiked}
+					initialLikes={likeCount}
+				/>
+				<RepostButton
+					authorId={author.id}
+					postId={id}
+					initialReposted={isReposted}
+					initialReposts={repostCount}
 				/>
 			</div>
 		</div>

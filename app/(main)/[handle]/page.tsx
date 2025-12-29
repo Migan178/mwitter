@@ -4,10 +4,9 @@ import FollowButton from "@/components/users/FollowButton";
 import LoginToFollowButton from "@/components/users/LoginToFollowButton";
 import UserInfo from "@/components/users/UserInfo";
 import { auth } from "@/lib/auth";
-import { type PostsWithLikesAndReplyCountResult } from "@/lib/services/post";
 import {
 	getUserByHandleWithCountsAndPosts,
-	type UserByHandleWithCountsAndPostsResult,
+	type UserResult,
 } from "@/lib/services/user";
 
 export default async function User({
@@ -17,7 +16,7 @@ export default async function User({
 }) {
 	const { handle } = await params;
 	const session = await auth();
-	let user: UserByHandleWithCountsAndPostsResult;
+	let user: UserResult | null;
 
 	let showFollowButton,
 		showLoginToFollowButton,
@@ -40,35 +39,11 @@ export default async function User({
 		else showFollowButton = true;
 	else showLoginToFollowButton = true;
 
-	const posts: PostsWithLikesAndReplyCountResult = user.posts.map(
-		({ id, content, likes, createdAt, _count, parent }) => {
-			return {
-				id,
-				content,
-				handle,
-				authorName: user.name,
-				authorId: user.id,
-				likes: _count.likes,
-				replies: _count.replies,
-				createdAt,
-				parentAuthor: parent?.author.handle,
-				isLiked: likes.length > 0,
-			};
-		},
-	);
-
 	return (
 		<div>
 			<div>
 				<div className="fixed w-50">
-					<UserInfo
-						name={user.name}
-						handle={handle}
-						description={user.description}
-						followers={user.follower}
-						following={user.following}
-						posts={user.posts.length}
-					/>
+					<UserInfo user={user} />
 					{showEditProfileButton ? <EditProfileButton /> : null}
 					{showFollowButton ? (
 						<FollowButton
@@ -79,7 +54,11 @@ export default async function User({
 					{showLoginToFollowButton ? <LoginToFollowButton /> : null}
 				</div>
 				<div className="ml-50">
-					<PostList posts={posts} />
+					{user.posts ? (
+						<PostList posts={user.posts} />
+					) : (
+						<h1>게시글 없음</h1>
+					)}
 				</div>
 			</div>
 		</div>

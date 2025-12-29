@@ -1,10 +1,10 @@
 import Notification from "./Notification";
-import { NotificationsResult } from "@/lib/services/notification";
+import { type NotificationResult } from "@/lib/services/notification";
 
 export default function NotificationList({
 	notifications,
 }: {
-	notifications: NotificationsResult;
+	notifications: NotificationResult[];
 }) {
 	if (notifications.length < 0) return <h1>알림 없음</h1>;
 
@@ -13,12 +13,7 @@ export default function NotificationList({
 			<ul>
 				{notifications.map(notification => (
 					<li key={notification.id}>
-						<Notification
-							type={notification.type}
-							isRead={notification.isRead}
-							post={notification.post}
-							sender={notification.sender}
-						/>
+						<Notification notification={notification} />
 					</li>
 				))}
 			</ul>

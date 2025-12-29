@@ -1,25 +1,23 @@
 import Description from "./Description";
 import Username from "./Username";
+import { UserResult } from "@/lib/services/user";
 import Link from "next/link";
 
 export default function UserInfo({
-	name,
-	handle,
-	followers,
-	following,
-	description,
-	posts,
+	user: {
+		name,
+		handle,
+		followerCount,
+		followingCount,
+		description,
+		postCount,
+	},
 }: {
-	name: string;
-	handle: string;
-	followers: number;
-	following: number;
-	description: string | null;
-	posts: number;
+	user: UserResult;
 }) {
 	const postsCountString = new Intl.NumberFormat("ko-KR", {
 		notation: "compact",
-	}).format(posts);
+	}).format(postCount!);
 
 	return (
 		<div>
@@ -27,10 +25,10 @@ export default function UserInfo({
 			<Description description={description} />
 			<div className="flex gap-x-2">
 				<Link href={`/${handle}/followers`}>
-					{followers}명의 팔로워
+					{followerCount}명의 팔로워
 				</Link>
 				<Link href={`/${handle}/following`}>
-					{following}명을 팔로우 중
+					{followingCount}명을 팔로우 중
 				</Link>
 			</div>
 			<p>{postsCountString}개의 게시글</p>

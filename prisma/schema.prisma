@@ -71,7 +71,13 @@ model Post {
     parentId Int?
     parent   Post? @relation("Parent", fields: [parentId], references: [id])
 
-    replies       Post[]         @relation("Parent")
+    replies Post[] @relation("Parent")
+
+    originalId Int?
+    original   Post? @relation("Original", fields: [originalId], references: [id])
+
+    reposts Post[] @relation("Original")
+
     notifications Notification[]
 }
 
@@ -103,9 +109,9 @@ model Notification {
     sender   User @relation("SentNotifications", fields: [senderId], references: [id])
     senderId Int
 
-    recipient   User @relation("ReceivedNotifications", fields: [recipientId], references: [id])
+    recipient   User @relation("ReceivedNotifications", fields: [recipientId], references: [id], onDelete: Cascade)
     recipientId Int
 
-    post   Post? @relation(fields: [postId], references: [id])
+    post   Post? @relation(fields: [postId], references: [id], onDelete: Cascade)
     postId Int?
 }

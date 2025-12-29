@@ -1,14 +1,29 @@
 import prisma from "../prisma";
-import { getQueryWithLikesAndReplyCount } from "./post";
+import { getQueryWithLikesAndReplyCount, PostResult } from "./post";
+
+export interface UserResult {
+	id: number;
+	name: string;
+	handle: string;
+	description: string | null;
+	posts?: PostResult[];
+	followerCount?: number;
+	followingCount?: number;
+	postCount?: number;
+	isFollowing: boolean;
+}
+
+export type UserWithoutFollowingResult = Omit<UserResult, "isFollowing">;
 
 export async function getUserByHandleWithCountsAndPosts(
 	handle: string,
 	sessionUserId: number,
-) {
+): Promise<UserResult | null> {
 	const user = await prisma.user.findUnique({
 		select: {
 			id: true,
 			name: true,
+			handle: true,
 			description: true,
 			follower: {
 				select: {
@@ -22,6 +37,7 @@ export async function getUserByHandleWithCountsAndPosts(
 				select: {
 					follower: true,
 					following: true,
+					posts: true,
 				},
 			},
 			posts: {
@@ -40,19 +56,30 @@ export async function getUserByHandleWithCountsAndPosts(
 	return {
 		name: user.name,
 		id: user.id,
+		handle: user.handle,
 		description: user.description,
-		posts: user.posts,
-		follower: user._count.follower,
-		following: user._count.following,
+		posts: user.posts.map(post => ({
+			id: post.id,
+			content: post.content,
+			author: post.author,
+			isLiked: post.likes.length > 0,
+			isReposted: post.reposts.length > 0,
+			likeCount: post._count.likes,
+			replyCount: post._count.replies,
+			repostCount: post._count.reposts,
+			createdAt: post.createdAt,
+		})),
+		followerCount: user._count.follower,
+		followingCount: user._count.following,
+		postCount: user._count.posts,
 		isFollowing: user.follower.length > 0,
 	};
 }
 
-export type UserByHandleWithCountsAndPostsResult = Awaited<
-	ReturnType<typeof getUserByHandleWithCountsAndPosts>
->;
-
-export async function getUsersWithFollowing(handle: string, sessionId: number) {
+export async function getUsersWithFollowing(
+	handle: string,
+	sessionId: number,
+): Promise<UserResult[]> {
 	const user = await prisma.user.findUnique({
 		select: {
 			following: {
@@ -84,19 +111,18 @@ export async function getUsersWithFollowing(handle: string, sessionId: number) {
 	if (!user) return [];
 
 	return user.following.map(({ following }) => ({
-		handle: following.handle,
 		id: following.id,
 		name: following.name,
+		handle: following.handle,
 		description: following.description,
 		isFollowing: following.follower.length > 0,
 	}));
 }
 
-export type UsersWithFollowingResult = Awaited<
-	ReturnType<typeof getUsersWithFollowing>
->;
-
-export async function getUsersWithFollowers(handle: string, sessionId: number) {
+export async function getUsersWithFollowers(
+	handle: string,
+	sessionId: number,
+): Promise<UserResult[]> {
 	const user = await prisma.user.findUnique({
 		select: {
 			follower: {
@@ -128,9 +154,9 @@ export async function getUsersWithFollowers(handle: string, sessionId: number) {
 	if (!user) return [];
 
 	return user.follower.map(({ follower }) => ({
-		handle: follower.handle,
 		id: follower.id,
 		name: follower.name,
+		handle: follower.handle,
 		description: follower.description,
 		isFollowing: follower.follower.length > 0,
 	}));
@@ -139,7 +165,7 @@ export async function getUsersWithFollowers(handle: string, sessionId: number) {
 export async function getUsersWithIsFollowingByQuery(
 	query: string,
 	sessionId: number,
-) {
+): Promise<UserResult[]> {
 	const users = await prisma.user.findMany({
 		select: {
 			handle: true,
@@ -180,7 +206,9 @@ export async function getUsersWithIsFollowingByQuery(
 	}));
 }
 
-export async function getUserById(id: number) {
+export async function getUserById(
+	id: number,
+): Promise<UserWithoutFollowingResult> {
 	const user = await prisma.user.findUnique({
 		where: {
 			id,
@@ -193,7 +221,5 @@ export async function getUserById(id: number) {
 		},
 	});
 
-	return user;
+	return user!;
 }
-
-export type UserResult = Awaited<ReturnType<typeof getUserById>>;

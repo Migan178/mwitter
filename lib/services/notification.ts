@@ -1,7 +1,19 @@
 import prisma from "../prisma";
-import { getQueryWithLikesAndReplyCount } from "./post";
+import { getQueryWithLikesAndReplyCount, type PostResult } from "./post";
+import { UserResult } from "./user";
+import type { NotificationType } from "@/app/generated/prisma/enums";
 
-export async function getNotificationsByRecipientId(recipientId: number) {
+export interface NotificationResult {
+	id: number;
+	isRead: boolean;
+	type: NotificationType;
+	sender: UserResult;
+	post: PostResult | null;
+}
+
+export async function getNotificationsByRecipientId(
+	recipientId: number,
+): Promise<NotificationResult[]> {
 	const notifications = await prisma.notification.findMany({
 		where: {
 			recipientId,
@@ -48,20 +60,17 @@ export async function getNotificationsByRecipientId(recipientId: number) {
 		},
 		post: post
 			? {
-					authorId: post.author.id,
 					id: post.id,
 					content: post.content,
-					handle: post.author.handle,
-					user: post.author.name,
-					liked: post.likes.length > 0,
-					likes: post._count.likes,
-					replies: post._count.replies,
+					author: post.author,
+					isLiked: post.likes.length > 0,
+					isReposted: post.reposts.length > 0,
+					likeCount: post._count.likes,
+					replyCount: post._count.replies,
+					repostCount: post._count.reposts,
+					parentAuthor: post.parent?.author.handle,
 					createdAt: post.createdAt,
 				}
 			: null,
 	}));
 }
-
-export type NotificationsResult = Awaited<
-	ReturnType<typeof getNotificationsByRecipientId>
->;

@@ -1,16 +1,13 @@
 import { UserList } from "@/components/users/UserList";
 import { auth } from "@/lib/auth";
-import {
-	getUsersWithFollowers,
-	type UsersWithFollowingResult,
-} from "@/lib/services/user";
+import { getUsersWithFollowers, type UserResult } from "@/lib/services/user";
 
 export default async function FollowersPage({
 	params,
 }: {
 	params: Promise<{ handle: string }>;
 }) {
-	let users: UsersWithFollowingResult;
+	let users: UserResult[];
 
 	const { handle } = await params;
 	const session = await auth();

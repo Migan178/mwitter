@@ -2,7 +2,7 @@ import PostDetail from "@/components/posts/PostDetail";
 import { auth } from "@/lib/auth";
 import {
 	getPostWithLikesAndReplies,
-	type PostWithLikesAndRepliesResult,
+	type PostWithOriginalResult,
 } from "@/lib/services/post";
 
 export default async function PostPage({
@@ -12,7 +12,7 @@ export default async function PostPage({
 }) {
 	const session = await auth();
 	const { id, handle } = await params;
-	let post: PostWithLikesAndRepliesResult;
+	let post: PostWithOriginalResult | null;
 
 	try {
 		post = await getPostWithLikesAndReplies(
@@ -24,22 +24,8 @@ export default async function PostPage({
 		return <h1>게시글 로드 중 문제 발생.</h1>;
 	}
 
-	if (!post || post.handle !== handle)
+	if (!post || post.author.handle !== handle)
 		return <h1>해당 게시글을 찾을 수 없음.</h1>;
 
-	return (
-		<PostDetail
-			user={post.authorName}
-			authorId={post.authorId}
-			handle={post.handle}
-			content={post.content}
-			createdAt={post.createdAt}
-			id={post.id}
-			likes={post.likes}
-			liked={post.isLiked}
-			replies={post.replies}
-			reply={post.parentAuthor}
-			replyCount={post.replyCount}
-		/>
-	);
+	return <PostDetail post={post} />;
 }

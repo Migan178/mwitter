@@ -6,36 +6,66 @@ import PostCreatedAt from "./PostCreatedAt";
 import PostList from "./PostList";
 import ReplyButton from "./ReplyButton";
 import ReplyTo from "./ReplyTo";
-import { type PostDataProps } from "./types/postDataProps";
-import { type PostsWithLikesAndReplyCountResult } from "@/lib/services/post";
-
-export interface PostDataWithRepliesProps extends PostDataProps {
-	replies: PostsWithLikesAndReplyCountResult;
-	replyCount: number;
-}
+import RepostButton from "./RepostButton";
+import RepostedBy from "./RepostedBy";
+import { type PostWithOriginalResult } from "@/lib/services/post";
 
 export default function PostDetail({
-	user,
-	authorId,
-	handle,
-	content,
-	createdAt,
-	id,
-	likes,
-	liked,
-	replies,
-	replyCount,
-	reply,
-}: PostDataWithRepliesProps) {
+	post: {
+		author,
+		content,
+		createdAt,
+		id,
+		isLiked,
+		isReposted,
+		likeCount,
+		replyCount,
+		repostCount,
+		parentAuthor,
+		original,
+		replies,
+	},
+}: {
+	post: PostWithOriginalResult;
+}) {
+	let repostedBy = {
+		name: "",
+		id: 0,
+		handle: "",
+	};
+
+	if (original) {
+		repostedBy = author;
+		author = original.author;
+		content = original.content;
+		createdAt = original.createdAt;
+		id = original.id;
+		likeCount = original.likeCount;
+		isLiked = original.isLiked;
+		isReposted = original.isReposted;
+		replyCount = original.replyCount;
+		repostCount = original.repostCount;
+		parentAuthor = original.parentAuthor;
+		replies = original.replies;
+	}
+
 	return (
 		<div>
-			{reply ? (
+			{original ? (
 				<div>
-					<ReplyTo reply={reply} />
+					<RepostedBy
+						name={repostedBy.name}
+						handle={repostedBy.handle}
+					/>
+				</div>
+			) : null}
+			{parentAuthor ? (
+				<div>
+					<ReplyTo reply={parentAuthor} />
 				</div>
 			) : null}
 			<div>
-				<Username name={user} handle={handle} />
+				<Username name={author.name} handle={author.handle} />
 			</div>
 			<div>
 				<PostContent content={content} />
@@ -46,17 +76,23 @@ export default function PostDetail({
 			<div>
 				<ReplyButton postId={id} replies={replyCount} />
 				<LikeButton
-					authorId={authorId}
+					authorId={author.id}
 					postId={id}
-					initialLiked={liked}
-					initialLikes={likes}
+					initialLiked={isLiked}
+					initialLikes={likeCount}
+				/>
+				<RepostButton
+					authorId={author.id}
+					postId={id}
+					initialReposted={isReposted}
+					initialReposts={repostCount}
 				/>
 			</div>
 			<div>
 				<PostCreateBox parentId={id} />
 			</div>
 			<div>
-				<PostList posts={replies} />
+				<PostList posts={replies!} />
 			</div>
 		</div>
 	);

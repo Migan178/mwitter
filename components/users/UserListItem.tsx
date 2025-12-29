@@ -3,20 +3,13 @@ import FollowButton from "./FollowButton";
 import LoginToFollowButton from "./LoginToFollowButton";
 import Username from "./Username";
 import { auth } from "@/lib/auth";
+import { UserResult } from "@/lib/services/user";
 import Link from "next/link";
 
 export default async function UserListItem({
-	handle,
-	name,
-	id,
-	description,
-	isFollowing,
+	user: { handle, name, id, description, isFollowing },
 }: {
-	handle: string;
-	name: string;
-	id: number;
-	description: string | null;
-	isFollowing: boolean;
+	user: UserResult;
 }) {
 	const session = await auth();
 	const userId = session ? Number(session.user?.id) : 0;

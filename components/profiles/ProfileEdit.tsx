@@ -3,7 +3,10 @@
 import NameInput from "../signup/NameInput";
 import DescriptionInput from "./DescriptionInput";
 import { editProfile } from "@/actions/editProfile";
-import { type UserResult } from "@/lib/services/user";
+import {
+	UserWithoutFollowingResult,
+	type UserResult,
+} from "@/lib/services/user";
 import Form from "next/form";
 import { useRouter } from "next/navigation";
 import { useActionState, useState } from "react";
@@ -11,7 +14,7 @@ import { useActionState, useState } from "react";
 export default function ProfileEdit({
 	initialData: user,
 }: {
-	initialData: UserResult;
+	initialData: UserWithoutFollowingResult;
 }) {
 	user = user!;
 	const [isVerified, setVerified] = useState(true);
