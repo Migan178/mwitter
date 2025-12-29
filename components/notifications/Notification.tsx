@@ -40,6 +40,17 @@ export default function Notification({
 				{type === "MENTION" || type === "REPLY" ? (
 					<Post post={post!} />
 				) : null}
+				{type === "REPOST" ? (
+					<Link href={`/${post?.author.handle}/posts/${post?.id}`}>
+						<Link href={`/${sender.handle}`}>
+							<p>
+								{sender.name}님이 당신의 게시물을 재게시
+								했습니다.
+							</p>
+							<p>{post?.content}</p>
+						</Link>
+					</Link>
+				) : null}
 			</div>
 		</div>
 	);
