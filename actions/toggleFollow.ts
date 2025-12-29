@@ -6,7 +6,7 @@ import prisma from "@/lib/prisma";
 export async function toggleFollow(formData: FormData) {
 	const session = await auth();
 	const userId = formData.get("userId");
-	if (!session || !userId) return;
+	if (!session || !userId || session.user?.id === userId) return;
 
 	const data = {
 		followerId: Number(session.user?.id),

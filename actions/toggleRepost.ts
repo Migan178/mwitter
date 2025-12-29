@@ -19,7 +19,7 @@ export async function toggleRepost(formData: FormData) {
 			},
 		});
 
-		if (repost.length > 0) {
+		if (repost.length > 0 && userId !== authorId) {
 			await prisma.post.delete({
 				where: {
 					id: repost[0].id,
@@ -37,6 +37,7 @@ export async function toggleRepost(formData: FormData) {
 			},
 		});
 
+		if (userId === authorId) return;
 		await prisma.notification.create({
 			data: {
 				recipientId: authorId,

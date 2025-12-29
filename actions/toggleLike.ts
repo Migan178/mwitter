@@ -29,6 +29,7 @@ export async function toggleLike(formData: FormData) {
 				},
 			});
 
+			if (userId === authorId) return;
 			await prisma.notification.deleteMany({
 				where: {
 					senderId: userId,
@@ -42,6 +43,7 @@ export async function toggleLike(formData: FormData) {
 
 		await prisma.like.create({ data });
 
+		if (userId === authorId) return;
 		await prisma.notification.create({
 			data: {
 				senderId: userId,
