@@ -1,12 +1,12 @@
 import prisma from "../prisma";
-import { getQueryWithLikesAndReplyCount, PostResult } from "./post";
+import { getQueryWithLikesAndReplyCount, PostWithOriginalResult } from "./post";
 
 export interface UserResult {
 	id: number;
 	name: string;
 	handle: string;
 	description: string | null;
-	posts?: PostResult[];
+	posts?: PostWithOriginalResult[];
 	followerCount?: number;
 	followingCount?: number;
 	postCount?: number;
@@ -43,6 +43,14 @@ export async function getUserByHandleWithCountsAndPosts(
 			posts: {
 				select: {
 					...getQueryWithLikesAndReplyCount(sessionUserId),
+					original: {
+						select: {
+							...getQueryWithLikesAndReplyCount(sessionUserId),
+						},
+					},
+				},
+				orderBy: {
+					createdAt: "desc",
 				},
 			},
 		},
@@ -68,6 +76,20 @@ export async function getUserByHandleWithCountsAndPosts(
 			replyCount: post._count.replies,
 			repostCount: post._count.reposts,
 			createdAt: post.createdAt,
+			original: post.original
+				? {
+						id: post.original.id,
+						content: post.original.content,
+						author: post.original.author,
+						isLiked: post.original.likes.length > 0,
+						isReposted: post.original.reposts.length > 0,
+						likeCount: post.original._count.likes,
+						replyCount: post.original._count.replies,
+						repostCount: post.original._count.reposts,
+						parentAuthor: post.original.parent?.author.handle,
+						createdAt: post.original.createdAt,
+					}
+				: undefined,
 		})),
 		followerCount: user._count.follower,
 		followingCount: user._count.following,
