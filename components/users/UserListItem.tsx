@@ -1,17 +1,19 @@
+"use client";
+
 import Description from "./Description";
 import FollowButton from "./FollowButton";
 import LoginToFollowButton from "./LoginToFollowButton";
 import Username from "./Username";
-import { auth } from "@/lib/auth";
 import { UserResult } from "@/lib/services/user";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 
-export default async function UserListItem({
+export default function UserListItem({
 	user: { handle, name, id, description, isFollowing },
 }: {
 	user: UserResult;
 }) {
-	const session = await auth();
+	const { data: session } = useSession();
 	const userId = session ? Number(session.user?.id) : 0;
 
 	return (
