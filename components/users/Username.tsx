@@ -7,8 +7,8 @@ export default function Username({
 }) {
 	return (
 		<div className="flex gap-x-1">
-			<h1>{name}</h1>
-			<h2>@{handle}</h2>
+			<h1 className="font-semibold">{name}</h1>
+			<h2 className="text-gray-500">@{handle}</h2>
 		</div>
 	);
 }

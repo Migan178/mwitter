@@ -8,14 +8,11 @@ export default function SwitchPostsTabButton() {
 	const setFollowingPosts = usePostTabStore(state => state.setFollowingPosts);
 
 	return (
-		<div className="flex gap-x-1">
-			<button onClick={setAllPosts} className="hover:cursor-pointer">
+		<div className="flex p-2">
+			<button onClick={setAllPosts} className="w-1/2">
 				전체 {currentTab === PostTabEnum.All ? "(선택됨)" : null}
 			</button>
-			<button
-				onClick={setFollowingPosts}
-				className="hover:cursor-pointer"
-			>
+			<button onClick={setFollowingPosts} className="w-1/2">
 				팔로잉
 				{currentTab === PostTabEnum.Following ? "(선택됨)" : null}
 			</button>

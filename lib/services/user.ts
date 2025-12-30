@@ -4,6 +4,7 @@ import { getQueryWithLikesAndReplyCount, PostWithOriginalResult } from "./post";
 export interface UserResult {
 	id: number;
 	name: string;
+	profile: string;
 	handle: string;
 	description: string | null;
 	posts?: PostWithOriginalResult[];
@@ -24,6 +25,7 @@ export async function getUserByHandleWithCountsAndPosts(
 			id: true,
 			name: true,
 			handle: true,
+			profile: true,
 			description: true,
 			follower: {
 				select: {
@@ -65,6 +67,7 @@ export async function getUserByHandleWithCountsAndPosts(
 		name: user.name,
 		id: user.id,
 		handle: user.handle,
+		profile: user.profile,
 		description: user.description,
 		posts: user.posts.map(post => ({
 			id: post.id,
@@ -112,6 +115,7 @@ export async function getUsersWithFollowing(
 							handle: true,
 							name: true,
 							description: true,
+							profile: true,
 							follower: {
 								select: {
 									followerId: true,
@@ -135,6 +139,7 @@ export async function getUsersWithFollowing(
 	return user.following.map(({ following }) => ({
 		id: following.id,
 		name: following.name,
+		profile: following.profile,
 		handle: following.handle,
 		description: following.description,
 		isFollowing: following.follower.length > 0,
@@ -155,6 +160,7 @@ export async function getUsersWithFollowers(
 							handle: true,
 							name: true,
 							description: true,
+							profile: true,
 							follower: {
 								select: {
 									followerId: true,
@@ -179,6 +185,7 @@ export async function getUsersWithFollowers(
 		id: follower.id,
 		name: follower.name,
 		handle: follower.handle,
+		profile: follower.profile,
 		description: follower.description,
 		isFollowing: follower.follower.length > 0,
 	}));
@@ -194,6 +201,7 @@ export async function getUsersWithIsFollowingByQuery(
 			id: true,
 			name: true,
 			description: true,
+			profile: true,
 			follower: {
 				select: {
 					followerId: true,
@@ -219,13 +227,16 @@ export async function getUsersWithIsFollowingByQuery(
 		},
 	});
 
-	return users.map(({ handle, id, name, follower, description }) => ({
-		handle,
-		id,
-		name,
-		description,
-		isFollowing: follower.length > 0,
-	}));
+	return users.map(
+		({ handle, id, name, follower, description, profile }) => ({
+			handle,
+			id,
+			profile,
+			name,
+			description,
+			isFollowing: follower.length > 0,
+		}),
+	);
 }
 
 export async function getUserById(
@@ -238,6 +249,7 @@ export async function getUserById(
 		select: {
 			id: true,
 			handle: true,
+			profile: true,
 			name: true,
 			description: true,
 		},

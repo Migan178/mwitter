@@ -1,3 +1,4 @@
+import UserProfile from "../users/UserProfile";
 import Username from "../users/Username";
 import LikeButton from "./LikeButton";
 import PostContent from "./PostContent";
@@ -51,44 +52,52 @@ export default function PostDetail({
 
 	return (
 		<div>
-			{original ? (
-				<div>
-					<RepostedBy
-						name={repostedBy.name}
-						handle={repostedBy.handle}
-					/>
+			<div className="border border-gray-300">
+				<div className="p-2">
+					{original ? (
+						<div>
+							<RepostedBy
+								name={repostedBy.name}
+								handle={repostedBy.handle}
+							/>
+						</div>
+					) : null}
+					{parentAuthor ? (
+						<div>
+							<ReplyTo reply={parentAuthor} />
+						</div>
+					) : null}
+					<div className="flex gap-x-2">
+						<div>
+							<UserProfile profile={author.profile} size={40} />
+						</div>
+						<div>
+							<Username
+								name={author.name}
+								handle={author.handle}
+							/>
+							<PostContent content={content} />
+						</div>
+					</div>
+					<div className="flex justify-between ml-12 mt-2 gap-x-3">
+						<ReplyButton postId={id} replies={replyCount} />
+						<LikeButton
+							authorId={author.id}
+							postId={id}
+							initialLiked={isLiked}
+							initialLikes={likeCount}
+						/>
+						<RepostButton
+							authorId={author.id}
+							postId={id}
+							initialReposted={isReposted}
+							initialReposts={repostCount}
+						/>
+						<PostCreatedAt createdAt={createdAt} />
+					</div>
 				</div>
-			) : null}
-			{parentAuthor ? (
-				<div>
-					<ReplyTo reply={parentAuthor} />
-				</div>
-			) : null}
-			<div>
-				<Username name={author.name} handle={author.handle} />
 			</div>
-			<div>
-				<PostContent content={content} />
-			</div>
-			<div>
-				<PostCreatedAt createdAt={createdAt} />
-			</div>
-			<div>
-				<ReplyButton postId={id} replies={replyCount} />
-				<LikeButton
-					authorId={author.id}
-					postId={id}
-					initialLiked={isLiked}
-					initialLikes={likeCount}
-				/>
-				<RepostButton
-					authorId={author.id}
-					postId={id}
-					initialReposted={isReposted}
-					initialReposts={repostCount}
-				/>
-			</div>
-			<div>
+			<div className="border-x border-gray-300">
 				<PostCreateBox parentId={id} />
 			</div>
 			<div>

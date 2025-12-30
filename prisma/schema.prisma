@@ -15,6 +15,7 @@ datasource db {
 
 model User {
     id             Int     @id @default(autoincrement())
+    profile        String  @default("/defaults/default_profile.png")
     handle         String  @unique @db.Char(16)
     name           String
     email          String  @unique

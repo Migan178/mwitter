@@ -7,6 +7,7 @@ export interface PostResult {
 		id: number;
 		name: string;
 		handle: string;
+		profile: string;
 	};
 	isLiked: boolean;
 	likeCount: number;
@@ -32,6 +33,7 @@ export function getQueryWithLikesAndReplyCount(userId: number) {
 				id: true,
 				name: true,
 				handle: true,
+				profile: true,
 			},
 		},
 		parent: {

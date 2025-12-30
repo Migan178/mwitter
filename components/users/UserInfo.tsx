@@ -1,4 +1,5 @@
 import Description from "./Description";
+import UserProfile from "./UserProfile";
 import Username from "./Username";
 import { UserResult } from "@/lib/services/user";
 import Link from "next/link";
@@ -11,6 +12,7 @@ export default function UserInfo({
 		followingCount,
 		description,
 		postCount,
+		profile,
 	},
 }: {
 	user: UserResult;
@@ -21,6 +23,7 @@ export default function UserInfo({
 
 	return (
 		<div>
+			<UserProfile profile={profile} />
 			<Username name={name} handle={handle} />
 			<Description description={description} />
 			<div className="flex gap-x-2">

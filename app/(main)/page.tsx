@@ -20,8 +20,12 @@ export default async function Home() {
 
 		return (
 			<div>
-				<SwitchPostsTabButton />
-				<PostCreateBox />
+				<div className="border border-gray-300">
+					<SwitchPostsTabButton />
+				</div>
+				<div className="border-x border-gray-300">
+					<PostCreateBox />
+				</div>
 				<PostsWrapper
 					allPosts={allPosts}
 					followingPosts={followingPosts}

@@ -1,3 +1,4 @@
+import UserProfile from "../users/UserProfile";
 import Username from "../users/Username";
 import LikeButton from "./LikeButton";
 import PostContent from "./PostContent";
@@ -50,36 +51,39 @@ export default function Post({
 	}
 
 	return (
-		<div>
-			{original ? (
-				<div>
-					<RepostedBy
-						name={repostedBy.name}
-						handle={repostedBy.handle}
-					/>
+		<div className="p-2">
+			<Link
+				href={`/${original ? repostedBy.handle : author.handle}/posts/${original ? repostId : id}`}
+			>
+				{original ? (
+					<div>
+						<RepostedBy
+							name={repostedBy.name}
+							handle={repostedBy.handle}
+						/>
+					</div>
+				) : null}
+				{parentAuthor ? (
+					<div>
+						<ReplyTo reply={parentAuthor} />
+					</div>
+				) : null}
+				<div className="flex gap-x-2">
+					<div>
+						<UserProfile profile={author.profile} size={40} />
+					</div>
+					<div>
+						<Link href={`/${author.handle}`}>
+							<Username
+								name={author.name}
+								handle={author.handle}
+							/>
+						</Link>
+						<PostContent content={content} />
+					</div>
 				</div>
-			) : null}
-			{parentAuthor ? (
-				<div>
-					<ReplyTo reply={parentAuthor} />
-				</div>
-			) : null}
-			<div>
-				<Link href={`/${author.handle}`}>
-					<Username name={author.name} handle={author.handle} />
-				</Link>
-			</div>
-			<div>
-				<Link
-					href={`/${original ? repostedBy.handle : author.handle}/posts/${original ? repostId : id}`}
-				>
-					<PostContent content={content} />
-				</Link>
-			</div>
-			<div>
-				<PostCreatedAt createdAt={createdAt} />
-			</div>
-			<div>
+			</Link>
+			<div className="flex justify-between ml-12 mt-2 gap-x-3">
 				<ReplyButton postId={id} replies={replyCount} />
 				<LikeButton
 					authorId={author.id}
@@ -93,6 +97,7 @@ export default function Post({
 					initialReposted={isReposted}
 					initialReposts={repostCount}
 				/>
+				<PostCreatedAt createdAt={createdAt} />
 			</div>
 		</div>
 	);
