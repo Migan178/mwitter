@@ -19,8 +19,8 @@ export async function getCroppedImage(imageSrc: string, area: Area) {
 	const ctx = canvas.getContext("2d");
 	if (!ctx) return null;
 
-	canvas.width = area.width;
-	canvas.height = area.height;
+	canvas.width = 512;
+	canvas.height = 512;
 
 	ctx.drawImage(
 		image,
