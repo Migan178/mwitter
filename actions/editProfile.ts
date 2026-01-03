@@ -2,7 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, unlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import * as z from "zod";
 
@@ -58,12 +58,44 @@ export async function editProfile(initialState: any, formData: FormData) {
 		};
 	}
 
+	/** @description 실제 파일이 저장될 경로 */
+	const uploadPath = join(process.cwd(), "public", "uploads", "profile");
+	/** @description 기본 사진 경로 */
+	const defaultPfP = join("/defaults", "default_profile.png");
+
+	// 기본 사진으로 변경했을 때
+	if (profile === defaultPfP) {
+		try {
+			await unlink(join(uploadPath, `${session.user.id}_profile.png`));
+
+			await prisma.user.update({
+				where: {
+					id: Number(session.user.id),
+				},
+				data: {
+					profile: defaultPfP,
+					description: validatedData.data.description,
+					name: validatedData.data.name,
+				},
+			});
+		} catch (err) {
+			console.log(err);
+			return {
+				success: false,
+				message: "프로필 수정 중 문제 발생.",
+			};
+		}
+
+		return {
+			success: true,
+			message: null,
+		};
+	}
+
 	// 프로필 사진에 변화가 있을 때
 	const profileFile = profile as File;
 	/** @description DB에 저장할 경로 */
 	const dbProfilePath = join("/uploads", "profile", profileFile.name);
-	/** @description 실제 파일이 저장될 경로 */
-	const uploadPath = join(process.cwd(), "public", "uploads", "profile");
 	const buffer = Buffer.from(await profileFile.arrayBuffer());
 
 	try {

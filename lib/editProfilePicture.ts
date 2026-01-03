@@ -34,9 +34,9 @@ export async function getCroppedImage(imageSrc: string, area: Area) {
 		canvas.height,
 	);
 
-	return new Promise<Blob>(resolve => {
+	return new Promise<string>(resolve => {
 		canvas.toBlob(file => {
-			resolve(file!);
+			resolve(URL.createObjectURL(file!));
 		}, "image/png");
 	});
 }
