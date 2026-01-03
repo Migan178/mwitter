@@ -2,6 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 import { mkdir, unlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import * as z from "zod";
@@ -9,6 +10,8 @@ import * as z from "zod";
 const formSchema = z.object({
 	description: z.string("올바르지 않은 설명").trim().nullable(),
 	name: z.string("올바르지 않은 이름").trim().min(1),
+	prevProfile: z.string("올바르지 않은 프로필 사진").trim().min(1),
+	currentPath: z.string("올바르지 않은 요청 URL").trim().min(1),
 });
 
 export async function editProfile(initialState: any, formData: FormData) {
@@ -19,6 +22,8 @@ export async function editProfile(initialState: any, formData: FormData) {
 	const validatedData = formSchema.safeParse({
 		description: formData.get("description"),
 		name: formData.get("name"),
+		prevProfile: formData.get("prevProfile"),
+		currentPath: formData.get("currentPath"),
 	});
 
 	if (!validatedData.success) {
@@ -30,7 +35,8 @@ export async function editProfile(initialState: any, formData: FormData) {
 	}
 
 	const profile = formData.get("profile");
-	const prevProfile = formData.get("prevProfile");
+	const prevProfile = validatedData.data.prevProfile;
+	const currentPath = validatedData.data.currentPath;
 
 	// 프로필 사진에 변화가 없을 때
 	if (profile === prevProfile) {
@@ -52,10 +58,9 @@ export async function editProfile(initialState: any, formData: FormData) {
 			};
 		}
 
-		return {
-			success: true,
-			message: null,
-		};
+		revalidatePath(currentPath);
+
+		return { success: true };
 	}
 
 	/** @description 실제 파일이 저장될 경로 */
@@ -86,10 +91,9 @@ export async function editProfile(initialState: any, formData: FormData) {
 			};
 		}
 
-		return {
-			success: true,
-			message: null,
-		};
+		revalidatePath(currentPath);
+
+		return { success: true };
 	}
 
 	// 프로필 사진에 변화가 있을 때
@@ -120,8 +124,7 @@ export async function editProfile(initialState: any, formData: FormData) {
 		};
 	}
 
-	return {
-		success: true,
-		message: null,
-	};
+	revalidatePath(currentPath);
+
+	return { success: true };
 }

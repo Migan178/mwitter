@@ -3,11 +3,13 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import userMentionRegexp from "@/lib/regex/userMention";
+import { revalidatePath } from "next/cache";
 import * as z from "zod";
 
 const formSchema = z.object({
 	content: z.string("내용이 없음").trim().min(1),
 	parentId: z.coerce.number().nullable(),
+	currentPath: z.string("올바르지 않은요청 URL").trim().min(1),
 });
 
 export interface CreatePostResponse {
@@ -27,6 +29,7 @@ export async function createPost(
 	const validatedData = formSchema.safeParse({
 		content: formData.get("content"),
 		parentId: formData.get("parentId"),
+		currentPath: formData.get("currentPath"),
 	});
 	if (!validatedData.success)
 		return { success: false, error: validatedData.error.message };
@@ -80,6 +83,8 @@ export async function createPost(
 		console.log(err);
 		return { success: false, error: "포스트 작성 중 오류 발생" };
 	}
+
+	revalidatePath(validatedData.data.currentPath);
 
 	return { success: true };
 }

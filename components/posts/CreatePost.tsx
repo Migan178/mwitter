@@ -7,7 +7,7 @@ import { createPost } from "@/actions/createPost";
 import useCreatePostStatusState from "@/stores/createPostStatus";
 import useDraftStore from "@/stores/drafts";
 import Form from "next/form";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useActionState, useEffect, useRef, useState } from "react";
 
 export default function CreatePost() {
@@ -19,6 +19,7 @@ export default function CreatePost() {
 	const [showDrafts, setShowDrafts] = useState(false);
 	const drafts = useDraftStore(state => state.drafts);
 
+	const pathname = usePathname();
 	const formRef = useRef<HTMLFormElement>(null);
 	const router = useRouter();
 
@@ -48,31 +49,26 @@ export default function CreatePost() {
 		<>
 			<div className="bg-white p-8">
 				<div className="flex justify-between">
-					<div>
-						<button onClick={backButton}>닫기</button>
-					</div>
+					<button onClick={backButton}>닫기</button>
 					<div className="flex gap-2">
 						{drafts.length > 0 ? (
-							<div>
-								<button onClick={() => setShowDrafts(true)}>
-									임시 저장 목록
-								</button>
-							</div>
+							<button onClick={() => setShowDrafts(true)}>
+								임시 저장 목록
+							</button>
 						) : null}
-						<div>
-							<input
-								type="submit"
-								value="작성"
-								disabled={pending}
-								form="create-post"
-							/>
-						</div>
+						<input
+							type="submit"
+							value="작성"
+							disabled={pending}
+							form="create-post"
+						/>
 					</div>
 				</div>
 				<Form ref={formRef} action={formAction} id="create-post">
 					{parentId ? (
 						<input type="hidden" name="parentId" value={parentId} />
 					) : null}
+					<input type="hidden" name="currentPath" value={pathname} />
 					<ContentInput
 						content={localContent}
 						setContent={setLocalContent}

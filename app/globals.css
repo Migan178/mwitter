@@ -8,4 +8,8 @@
 	button:not(:disabled) {
 		@apply hover:cursor-pointer;
 	}
+
+	input[type="submit"]:not(:disabled) {
+		@apply hover:cursor-pointer;
+	}
 }

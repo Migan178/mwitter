@@ -8,7 +8,7 @@ import ProfilePictureCropperModal from "./ProfilePictureCropperModal";
 import { editProfile } from "@/actions/editProfile";
 import { type UserWithoutFollowingResult } from "@/lib/services/user";
 import Form from "next/form";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
 	ChangeEvent,
 	useActionState,
@@ -32,10 +32,12 @@ export default function ProfileEdit({
 		message: "",
 	});
 	const [name, setName] = useState(user.name);
-	const router = useRouter();
 	const [showCropper, setShowCropper] = useState(false);
 	const [profile, setProfile] = useState(user.profile);
 	const [showPfPMenu, setShowPfPMenu] = useState(false);
+
+	const pathname = usePathname();
+	const router = useRouter();
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
@@ -136,6 +138,11 @@ export default function ProfileEdit({
 							type="hidden"
 							value={user.profile}
 							name="prevProfile"
+						/>
+						<input
+							type="hidden"
+							value={pathname}
+							name="currentPath"
 						/>
 						<NameInput
 							name={name}
