@@ -14,6 +14,7 @@ export default function UserProfile({
 			width={size}
 			height={size}
 			className="rounded-full"
+			unoptimized
 		/>
 	);
 }
