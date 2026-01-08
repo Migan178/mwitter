@@ -69,10 +69,10 @@ export default function ProfileEdit({
 		formAction(formData);
 	}
 
-	async function onFileChange(e: ChangeEvent<HTMLInputElement>) {
-		if (!e.target.files || e.target.files.length < 0) return;
+	function onFileChange(e: ChangeEvent<HTMLInputElement>) {
+		if (!e.target.files || !e.target.files.length) return;
 		const file = e.target.files[0];
-		const imageDataUrl = await readFile(file);
+		const imageDataUrl = URL.createObjectURL(file);
 		setProfile(imageDataUrl);
 		setShowCropper(true);
 	}
@@ -178,15 +178,4 @@ export default function ProfileEdit({
 			/>
 		</>
 	);
-}
-
-function readFile(file: File) {
-	return new Promise<string>((resolve, reject) => {
-		const reader = new FileReader();
-		reader.addEventListener("load", () =>
-			resolve(reader.result?.toString()!),
-		);
-		reader.addEventListener("error", reject);
-		reader.readAsDataURL(file);
-	});
 }

@@ -2,7 +2,8 @@
 
 import Modal from "@/components/Modal";
 import useCreatePostStatusState from "@/stores/createPostStatus";
-import useDraftStore from "@/stores/drafts";
+import useDraftStore, { Image } from "@/stores/drafts";
+import { get as getItem } from "idb-keyval";
 
 export default function Drafts({
 	setShowDrafts,
@@ -13,14 +14,18 @@ export default function Drafts({
 	const removeDraft = useDraftStore(state => state.removeDraft);
 	const setParentId = useCreatePostStatusState(state => state.setPostId);
 	const setContent = useCreatePostStatusState(state => state.setContent);
+	const setImages = useCreatePostStatusState(state => state.setImages);
 
-	function applyDraft(id: number) {
-		const { content, parentId } = drafts.find(
+	async function applyDraft(id: number) {
+		const { content, parentId, images } = drafts.find(
 			draft => draft.draftId === id,
 		)!;
 
+		const imageFiles = (await getItem<Image[]>(images))!;
+
 		setParentId(parentId);
 		setContent(content);
+		setImages(imageFiles.toSorted((a, b) => a.order - b.order));
 
 		removeDraft(id);
 		setShowDrafts(false);

@@ -4,12 +4,15 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import userMentionRegexp from "@/lib/regex/userMention";
 import { revalidatePath } from "next/cache";
+import { mkdir, writeFile } from "node:fs/promises";
+import { extname, join } from "node:path";
 import * as z from "zod";
 
 const formSchema = z.object({
 	content: z.string("내용이 없음").trim().min(1),
 	parentId: z.coerce.number().nullable(),
 	currentPath: z.string("올바르지 않은요청 URL").trim().min(1),
+	images: z.array(z.instanceof(File)),
 });
 
 export interface CreatePostResponse {
@@ -26,20 +29,57 @@ export async function createPost(
 		return { success: false, error: "올바르지 않은 사용자" };
 	const userId = Number(session.user.id);
 
+	const files = formData.getAll("images");
+
 	const validatedData = formSchema.safeParse({
 		content: formData.get("content"),
 		parentId: formData.get("parentId"),
 		currentPath: formData.get("currentPath"),
+		images: files,
 	});
 	if (!validatedData.success)
 		return { success: false, error: validatedData.error.message };
 
 	try {
+		const images: { name: string; url: string; order: number }[] = [];
+
+		if (validatedData.data.images.length) {
+			/** @description 실제 파일이 저장될 경로 */
+			const uploadPath = join(
+				process.cwd(),
+				"public",
+				"uploads",
+				"images",
+			);
+			/** @description DB에 저장할 경로 */
+			const dbImagePath = join("/uploads", "images");
+
+			await mkdir(uploadPath, { recursive: true });
+
+			// 순서를 위해 index가 필요하므로 for of 사용 안함
+			for (let i = 0; i < validatedData.data.images.length; i++) {
+				const image = validatedData.data.images[i];
+				const buffer = Buffer.from(await image.arrayBuffer());
+				const filename = `${Date.now()}_image_${i}.${extname(image.name)}`;
+
+				await writeFile(join(uploadPath, filename), buffer);
+
+				images.push({
+					order: i,
+					name: filename,
+					url: join(dbImagePath, filename),
+				});
+			}
+		}
+
 		const newPost = await prisma.post.create({
 			data: {
 				parentId: validatedData.data.parentId,
 				content: validatedData.data.content,
 				authorId: userId,
+				images: {
+					create: images,
+				},
 			},
 			include: {
 				parent: true,

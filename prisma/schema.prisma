@@ -80,6 +80,18 @@ model Post {
     reposts Post[] @relation("Original")
 
     notifications Notification[]
+    images        PostImage[]
+}
+
+model PostImage {
+    id    Int     @id @default(autoincrement())
+    name  String
+    url   String
+    order Int     @default(0)
+    alt   String?
+
+    postId Int
+    post   Post @relation(fields: [postId], references: [id])
 }
 
 model Like {
