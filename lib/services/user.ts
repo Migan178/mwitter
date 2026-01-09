@@ -14,6 +14,12 @@ export interface UserResult {
 	isFollowing: boolean;
 }
 
+export interface ProfileResult {
+	name: string;
+	profile: string;
+	handle: string;
+}
+
 export type UserWithoutFollowingResult = Omit<UserResult, "isFollowing">;
 
 export async function getUserByHandleWithCountsAndPosts(
@@ -260,6 +266,21 @@ export async function getUserById(
 			profile: true,
 			name: true,
 			description: true,
+		},
+	});
+
+	return user!;
+}
+
+export async function getProfileById(id: number): Promise<ProfileResult> {
+	const user = await prisma.user.findUnique({
+		where: {
+			id,
+		},
+		select: {
+			profile: true,
+			name: true,
+			handle: true,
 		},
 	});
 

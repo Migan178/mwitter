@@ -40,10 +40,7 @@ export const {
 
 					return {
 						id: user.id.toString(),
-						name: user.name,
 						email: user.email,
-						handle: user.handle,
-						profile: user.profile,
 					};
 				} catch (err) {
 					console.error(err);
@@ -56,15 +53,11 @@ export const {
 		jwt({ token, user }) {
 			if (user) {
 				token.id = user.id;
-				token.handle = user.handle;
-				token.profile = user.profile;
 			}
 			return token;
 		},
 		session({ token, session }) {
 			session.user.id = token.id;
-			session.user.handle = token.handle;
-			session.user.profile = token.profile;
 			return session;
 		},
 	},

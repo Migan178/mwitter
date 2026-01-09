@@ -1,7 +1,9 @@
 import "../globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import Navbar from "@/components/Navbar";
+import UserDataInitializer from "@/components/UserDataInitializer";
 import { auth } from "@/lib/auth";
+import { getProfileById, ProfileResult } from "@/lib/services/user";
 import type { Metadata } from "next";
 import LocalFont from "next/font/local";
 
@@ -25,10 +27,21 @@ export default async function RootLayout({
 }>) {
 	const session = await auth();
 
+	let user: ProfileResult | null = null;
+
+	if (session) {
+		try {
+			user = await getProfileById(Number(session.user?.id));
+		} catch (err) {
+			console.error(err);
+			return;
+		}
+	}
+
 	return (
 		<html lang="ko" className={`${pretendard.variable}`}>
 			<body>
-				<AuthProvider session={session}>
+				<AuthProvider session={session} user={user}>
 					<div className="flex w-full">
 						{session ? <Navbar /> : null}
 						<div className="ml-100">{children}</div>
