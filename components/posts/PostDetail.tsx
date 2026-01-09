@@ -11,6 +11,7 @@ import RepostButton from "./RepostButton";
 import RepostedBy from "./RepostedBy";
 import PostImageList from "./images/PostImageList";
 import { type PostWithOriginalResult } from "@/lib/services/post";
+import Link from "next/link";
 
 export default function PostDetail({
 	post: {
@@ -71,14 +72,24 @@ export default function PostDetail({
 						</div>
 					) : null}
 					<div className="flex gap-x-2">
-						<div>
-							<UserProfile profile={author.profile} size={40} />
+						<div className="hover:brightness-80 duration-200 w-10 h-10">
+							<Link href={`/${author.handle}`}>
+								<UserProfile
+									profile={author.profile}
+									size={40}
+								/>
+							</Link>
 						</div>
 						<div>
-							<Username
-								name={author.name}
-								handle={author.handle}
-							/>
+							<Link
+								href={`/${author.handle}`}
+								className="hover:underline"
+							>
+								<Username
+									name={author.name}
+									handle={author.handle}
+								/>
+							</Link>
 							<PostContent content={content} />
 						</div>
 					</div>

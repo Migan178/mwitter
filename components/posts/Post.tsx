@@ -72,11 +72,16 @@ export default function Post({
 					</div>
 				) : null}
 				<div className="flex gap-x-2">
-					<div>
-						<UserProfile profile={author.profile} size={40} />
+					<div className="hover:brightness-80 duration-200 w-10 h-10">
+						<Link href={`/${author.handle}`}>
+							<UserProfile profile={author.profile} size={40} />
+						</Link>
 					</div>
 					<div>
-						<Link href={`/${author.handle}`}>
+						<Link
+							href={`/${author.handle}`}
+							className="hover:underline"
+						>
 							<Username
 								name={author.name}
 								handle={author.handle}
