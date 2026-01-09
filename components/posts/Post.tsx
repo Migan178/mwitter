@@ -1,11 +1,8 @@
 import UserProfile from "../users/UserProfile";
 import Username from "../users/Username";
-import LikeButton from "./LikeButton";
+import PostButtons from "./PostButtons";
 import PostContent from "./PostContent";
-import PostCreatedAt from "./PostCreatedAt";
-import ReplyButton from "./ReplyButton";
 import ReplyTo from "./ReplyTo";
-import RepostButton from "./RepostButton";
 import RepostedBy from "./RepostedBy";
 import PostImageList from "./images/PostImageList";
 import { type PostWithOriginalResult } from "@/lib/services/post";
@@ -66,11 +63,6 @@ export default function Post({
 						/>
 					</div>
 				) : null}
-				{parentAuthor ? (
-					<div>
-						<ReplyTo reply={parentAuthor} />
-					</div>
-				) : null}
 				<div className="flex gap-x-2">
 					<div className="hover:brightness-80 duration-200 w-10 h-10">
 						<Link href={`/${author.handle}`}>
@@ -87,6 +79,11 @@ export default function Post({
 								handle={author.handle}
 							/>
 						</Link>
+						{parentAuthor ? (
+							<div>
+								<ReplyTo reply={parentAuthor} />
+							</div>
+						) : null}
 						<PostContent content={content} />
 					</div>
 				</div>
@@ -98,22 +95,16 @@ export default function Post({
 					images={images}
 				/>
 			</div>
-			<div className="flex justify-between ml-12 mt-2 gap-x-3">
-				<ReplyButton postId={id} replies={replyCount} />
-				<LikeButton
-					authorId={author.id}
-					postId={id}
-					initialLiked={isLiked}
-					initialLikes={likeCount}
-				/>
-				<RepostButton
-					authorId={author.id}
-					postId={id}
-					initialReposted={isReposted}
-					initialReposts={repostCount}
-				/>
-				<PostCreatedAt createdAt={createdAt} />
-			</div>
+			<PostButtons
+				postId={id}
+				authorId={author.id}
+				replies={replyCount}
+				likes={likeCount}
+				liked={isLiked}
+				reposts={repostCount}
+				reposted={isReposted}
+				createdAt={createdAt}
+			/>
 		</div>
 	);
 }

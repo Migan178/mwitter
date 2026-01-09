@@ -19,11 +19,11 @@ export default async function Home() {
 		]);
 
 		return (
-			<div>
-				<div className="border border-gray-300">
+			<div className="w-140">
+				<div className="border border-gray-300 w-full">
 					<SwitchPostsTabButton />
 				</div>
-				<div className="border-x border-gray-300">
+				<div className="border-x border-gray-300 w-full">
 					<PostCreateBox />
 				</div>
 				<PostsWrapper

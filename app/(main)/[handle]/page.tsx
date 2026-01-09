@@ -42,7 +42,7 @@ export default async function User({
 	return (
 		<div>
 			<div>
-				<div className="fixed w-50">
+				<div className="fixed w-50 top-10 left-250">
 					<UserInfo user={user} />
 					{showEditProfileButton ? <EditProfileButton /> : null}
 					{showFollowButton ? (
@@ -53,9 +53,11 @@ export default async function User({
 					) : null}
 					{showLoginToFollowButton ? <LoginToFollowButton /> : null}
 				</div>
-				<div className="ml-50">
+				<div>
 					{user.posts ? (
-						<PostList posts={user.posts} />
+						<div className="w-140">
+							<PostList posts={user.posts} />
+						</div>
 					) : (
 						<h1>게시글 없음</h1>
 					)}

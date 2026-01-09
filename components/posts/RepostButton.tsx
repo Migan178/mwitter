@@ -3,6 +3,7 @@
 import { toggleRepost } from "@/actions/toggleRepost";
 import Form from "next/form";
 import { useState } from "react";
+import { Repeat } from "react-bootstrap-icons";
 
 export default function RepostButton({
 	authorId,
@@ -33,8 +34,13 @@ export default function RepostButton({
 		<Form action={toggleRepost}>
 			<input type="hidden" value={postId} name="postId" />
 			<input type="hidden" value={authorId} name="authorId" />
-			<button type="submit" onClick={toggleButton}>
-				{reposts} {isReposted ? "재게시 취소" : "재게시"}
+			<button
+				type="submit"
+				className={`post-button ${isReposted ? "text-green-500" : null}`}
+				onClick={toggleButton}
+			>
+				<Repeat />
+				{reposts}
 			</button>
 		</Form>
 	);

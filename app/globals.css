@@ -13,3 +13,11 @@
 		@apply hover:cursor-pointer;
 	}
 }
+
+@utility post-button {
+	@apply flex items-center gap-x-1;
+}
+
+@utility floating-button {
+	@apply absolute flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white;
+}

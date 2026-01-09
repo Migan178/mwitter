@@ -14,7 +14,7 @@ export default function PostList({
 		);
 
 	return (
-		<ul className="border border-gray-300">
+		<ul className="border border-gray-300 w-full">
 			{posts.map(post => {
 				return (
 					<li key={post.id}>

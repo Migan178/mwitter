@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { CaretLeftFill, CaretRightFill, XLg } from "react-bootstrap-icons";
 
 export default function PaginatedImages({
 	url,
@@ -25,34 +26,27 @@ export default function PaginatedImages({
 
 	return (
 		<div className="relative bg-black w-full h-screen justify-center flex">
-			<div className="absolute top-8 left-8 bg-black/50 w-8 h-8 rounded-full">
-				<button
-					className="text-white w-full h-full"
-					onClick={router.back}
-				>
-					X
-				</button>
-			</div>
-			{/* bootstrap-icons의 화살표로 변경*/}
+			<button
+				className="floating-button top-8 left-8"
+				onClick={router.back}
+			>
+				<XLg />
+			</button>
 			{currentIndex > 0 ? (
-				<div className="absolute bg-black/50 left-8 top-1/2 w-8 h-8 rounded-full">
-					<button
-						className="text-white w-full h-full"
-						onClick={() => setCurrentIndex(currentIndex - 1)}
-					>
-						{"<"}
-					</button>
-				</div>
+				<button
+					className="floating-button top-1/2 left-8"
+					onClick={() => setCurrentIndex(currentIndex - 1)}
+				>
+					<CaretLeftFill />
+				</button>
 			) : null}
 			{currentIndex < images.length - 1 ? (
-				<div className="absolute bg-black/50 right-8 top-1/2 w-8 h-8 rounded-full">
-					<button
-						className="text-white w-full h-full"
-						onClick={() => setCurrentIndex(currentIndex + 1)}
-					>
-						{">"}
-					</button>
-				</div>
+				<button
+					className="floating-button top-1/2 right-8"
+					onClick={() => setCurrentIndex(currentIndex + 1)}
+				>
+					<CaretRightFill />
+				</button>
 			) : null}
 			<Image
 				src={images[currentIndex].url}

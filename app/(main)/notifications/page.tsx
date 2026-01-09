@@ -12,7 +12,7 @@ export default async function NotificationPage() {
 		);
 
 		return (
-			<div>
+			<div className="w-140">
 				<NotificationList notifications={notifications} />
 			</div>
 		);

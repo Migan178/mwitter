@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { XLg } from "react-bootstrap-icons";
 
 export default function ImagePreview({
 	url,
@@ -11,14 +12,12 @@ export default function ImagePreview({
 }) {
 	return (
 		<div className="relative h-40 w-40 shrink-0">
-			<div className="absolute z-10 right-4 top-3 bg-black/50 w-8 h-8 rounded-full">
-				<button
-					className="w-full h-full text-white"
-					onClick={removeImage}
-				>
-					{/* TODO: bootstrap-icon의 X로 변경 */}X
-				</button>
-			</div>
+			<button
+				className="floating-button top-3 right-4 z-10"
+				onClick={removeImage}
+			>
+				<XLg />
+			</button>
 			<Image
 				src={url}
 				alt="asdf"

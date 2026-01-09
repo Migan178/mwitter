@@ -2,6 +2,7 @@
 
 import useCreatePostStatusState from "@/stores/createPostStatus";
 import { useRouter } from "next/navigation";
+import { Chat } from "react-bootstrap-icons";
 
 export default function ReplyButton({
 	postId,
@@ -20,11 +21,9 @@ export default function ReplyButton({
 
 	return (
 		<div>
-			<button
-				className="hover:cursor-pointer"
-				onClick={moveToCreateReply}
-			>
-				답글 {replies}
+			<button className="post-button" onClick={moveToCreateReply}>
+				<Chat />
+				{replies}
 			</button>
 		</div>
 	);

@@ -13,11 +13,11 @@ export default function PostImageList({
 	images.sort((a, b) => a.order - b.order);
 
 	return (
-		<ol className="flex w-70 gap-x-2 overflow-x-auto">
+		<ol className="flex w-full gap-x-2 overflow-x-auto">
 			{images.map((image, i) => (
 				<li
 					key={Math.floor(Math.random() * 1000)}
-					className="relative h-40 shrink-0"
+					className="relative h-50 shrink-0"
 				>
 					<Link
 						href={`/${handle}/posts/${postId}/media/${i}`}

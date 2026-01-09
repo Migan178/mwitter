@@ -3,6 +3,7 @@
 import { toggleLike } from "@/actions/toggleLike";
 import Form from "next/form";
 import { useState } from "react";
+import { Heart, HeartFill } from "react-bootstrap-icons";
 
 export default function LikeButton({
 	authorId,
@@ -35,10 +36,11 @@ export default function LikeButton({
 			<input type="hidden" value={authorId} name="authorId" />
 			<button
 				type="submit"
-				className="hover:cursor-pointer"
+				className={`post-button ${isLiked ? "text-pink-500" : null}`}
 				onClick={toggleLikeButton}
 			>
-				{likes} {isLiked ? "좋아요 취소" : "좋아요"}
+				{isLiked ? <HeartFill /> : <Heart />}
+				{likes}
 			</button>
 		</Form>
 	);
