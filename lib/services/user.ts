@@ -78,6 +78,10 @@ export async function getUserByHandleWithCountsAndPosts(
 			likeCount: post._count.likes,
 			replyCount: post._count.replies,
 			repostCount: post._count.reposts,
+			images: post.images.map(image => ({
+				order: image.order,
+				url: image.url,
+			})),
 			createdAt: post.createdAt,
 			original: post.original
 				? {
@@ -90,6 +94,10 @@ export async function getUserByHandleWithCountsAndPosts(
 						replyCount: post.original._count.replies,
 						repostCount: post.original._count.reposts,
 						parentAuthor: post.original.parent?.author.handle,
+						images: post.original.images.map(image => ({
+							order: image.order,
+							url: image.url,
+						})),
 						createdAt: post.original.createdAt,
 					}
 				: undefined,

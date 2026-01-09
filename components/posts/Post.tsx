@@ -7,6 +7,7 @@ import ReplyButton from "./ReplyButton";
 import ReplyTo from "./ReplyTo";
 import RepostButton from "./RepostButton";
 import RepostedBy from "./RepostedBy";
+import PostImageList from "./images/PostImageList";
 import { type PostWithOriginalResult } from "@/lib/services/post";
 import "dayjs/locale/ko";
 import Link from "next/link";
@@ -24,6 +25,7 @@ export default function Post({
 		repostCount,
 		parentAuthor,
 		original,
+		images,
 	},
 }: {
 	post: PostWithOriginalResult;
@@ -48,6 +50,7 @@ export default function Post({
 		replyCount = original.replyCount;
 		repostCount = original.repostCount;
 		parentAuthor = original.parentAuthor;
+		images = original.images;
 	}
 
 	return (
@@ -83,6 +86,13 @@ export default function Post({
 					</div>
 				</div>
 			</Link>
+			<div className="ml-12">
+				<PostImageList
+					handle={author.handle}
+					postId={id}
+					images={images}
+				/>
+			</div>
 			<div className="flex justify-between ml-12 mt-2 gap-x-3">
 				<ReplyButton postId={id} replies={replyCount} />
 				<LikeButton

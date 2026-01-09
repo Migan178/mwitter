@@ -1,4 +1,5 @@
 import prisma from "../prisma";
+import { Image } from "@/stores/drafts";
 
 export interface PostResult {
 	id: number;
@@ -15,6 +16,10 @@ export interface PostResult {
 	repostCount: number;
 	isReposted: boolean;
 	replies?: PostResult[];
+	images: {
+		order: number;
+		url: string;
+	}[];
 	parentAuthor?: string;
 	createdAt: Date;
 }
@@ -59,6 +64,13 @@ export function getQueryWithLikesAndReplyCount(userId: number) {
 			},
 			where: {
 				authorId: userId,
+			},
+		},
+		images: {
+			select: {
+				name: true,
+				url: true,
+				order: true,
 			},
 		},
 		_count: {
@@ -110,9 +122,17 @@ export async function getAllPostsWithLikesAndReplyCount(
 					likeCount: post.original._count.likes,
 					replyCount: post.original._count.replies,
 					repostCount: post.original._count.reposts,
+					images: post.original.images.map(image => ({
+						order: image.order,
+						url: image.url,
+					})),
 					createdAt: post.original.createdAt,
 				}
 			: undefined,
+		images: post.images.map(image => ({
+			order: image.order,
+			url: image.url,
+		})),
 		createdAt: post.createdAt,
 	}));
 }
@@ -167,9 +187,17 @@ export async function getFollowingPostsWithLikesReplyCount(
 					likeCount: post.original._count.likes,
 					replyCount: post.original._count.replies,
 					repostCount: post.original._count.reposts,
+					images: post.original.images.map(image => ({
+						order: image.order,
+						url: image.url,
+					})),
 					createdAt: post.original.createdAt,
 				}
 			: undefined,
+		images: post.images.map(image => ({
+			order: image.order,
+			url: image.url,
+		})),
 		createdAt: post.createdAt,
 	}));
 }
@@ -229,11 +257,19 @@ export async function getPostWithLikesAndReplies(
 						likeCount: post._count.likes,
 						replyCount: post._count.replies,
 						repostCount: post._count.reposts,
+						images: post.images.map(image => ({
+							order: image.order,
+							url: image.url,
+						})),
 						createdAt: post.createdAt,
 					})),
 					replyCount: post.original._count.replies,
 					repostCount: post.original._count.reposts,
 					parentAuthor: post.original.parent?.author.handle,
+					images: post.original.images.map(image => ({
+						order: image.order,
+						url: image.url,
+					})),
 					createdAt: post.original.createdAt,
 				}
 			: undefined,
@@ -246,7 +282,15 @@ export async function getPostWithLikesAndReplies(
 			likeCount: post._count.likes,
 			replyCount: post._count.replies,
 			repostCount: post._count.reposts,
+			images: post.images.map(image => ({
+				order: image.order,
+				url: image.url,
+			})),
 			createdAt: post.createdAt,
+		})),
+		images: post.images.map(image => ({
+			order: image.order,
+			url: image.url,
 		})),
 		createdAt: post.createdAt,
 	};
@@ -278,6 +322,10 @@ export async function getPostsWithLikesAndReplyCountByQuery(
 		likeCount: post._count.likes,
 		replyCount: post._count.replies,
 		repostCount: post._count.reposts,
+		images: post.images.map(image => ({
+			order: image.order,
+			url: image.url,
+		})),
 		createdAt: post.createdAt,
 	}));
 }

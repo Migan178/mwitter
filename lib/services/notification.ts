@@ -30,6 +30,7 @@ export async function getNotificationsByRecipientId(
 					id: true,
 					name: true,
 					handle: true,
+					profile: true,
 					description: true,
 					follower: {
 						select: {
@@ -56,6 +57,7 @@ export async function getNotificationsByRecipientId(
 			name: sender.name,
 			handle: sender.handle,
 			description: sender.description,
+			profile: sender.profile,
 			isFollowing: sender.follower.length > 0,
 		},
 		post: post
@@ -69,6 +71,10 @@ export async function getNotificationsByRecipientId(
 					replyCount: post._count.replies,
 					repostCount: post._count.reposts,
 					parentAuthor: post.parent?.author.handle,
+					images: post.images.map(image => ({
+						url: image.url,
+						order: image.order,
+					})),
 					createdAt: post.createdAt,
 				}
 			: null,
