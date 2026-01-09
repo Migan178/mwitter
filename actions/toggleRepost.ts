@@ -2,14 +2,26 @@
 
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import * as z from "zod";
+
+const formSchema = z.object({
+	postId: z.coerce.number().min(1),
+	authorId: z.coerce.number().min(1),
+});
 
 export async function toggleRepost(formData: FormData) {
 	const session = await auth();
-	const postId = Number(formData.get("postId"));
-	const authorId = Number(formData.get("authorId"));
-	if (!session || isNaN(postId) || isNaN(authorId)) return;
-	const userId = Number(session.user?.id);
-	if (isNaN(userId)) return;
+	if (!session || !session.user) return;
+
+	const userId = Number(session.user.id);
+
+	const { data, success } = formSchema.safeParse({
+		postId: formData.get("postId"),
+		authorId: formData.get("authorId"),
+	});
+	if (!success) return;
+
+	const { postId, authorId } = data;
 
 	try {
 		const repost = await prisma.post.findMany({

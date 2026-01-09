@@ -25,25 +25,27 @@ export async function createPost(
 	formData: FormData,
 ): Promise<CreatePostResponse> {
 	const session = await auth();
-	if (!session || !session.user || !session.user.id)
+	if (!session || !session.user)
 		return { success: false, error: "올바르지 않은 사용자" };
+
 	const userId = Number(session.user.id);
 
 	const files = formData.getAll("images");
 
-	const validatedData = formSchema.safeParse({
+	const { data, error, success } = formSchema.safeParse({
 		content: formData.get("content"),
 		parentId: formData.get("parentId"),
 		currentPath: formData.get("currentPath"),
 		images: files,
 	});
-	if (!validatedData.success)
-		return { success: false, error: validatedData.error.message };
+	if (!success) return { success: false, error: error.message };
+
+	const { content, currentPath, images: imagesData, parentId } = data;
 
 	try {
 		const images: { name: string; url: string; order: number }[] = [];
 
-		if (validatedData.data.images.length) {
+		if (imagesData.length) {
 			/** @description 실제 파일이 저장될 경로 */
 			const uploadPath = join(
 				process.cwd(),
@@ -57,8 +59,8 @@ export async function createPost(
 			await mkdir(uploadPath, { recursive: true });
 
 			// 순서를 위해 index가 필요하므로 for of 사용 안함
-			for (let i = 0; i < validatedData.data.images.length; i++) {
-				const image = validatedData.data.images[i];
+			for (let i = 0; i < imagesData.length; i++) {
+				const image = imagesData[i];
 				const buffer = Buffer.from(await image.arrayBuffer());
 				const filename = `${Date.now()}_image_${i}.${extname(image.name)}`;
 
@@ -74,8 +76,8 @@ export async function createPost(
 
 		const newPost = await prisma.post.create({
 			data: {
-				parentId: validatedData.data.parentId,
-				content: validatedData.data.content,
+				parentId,
+				content: content,
 				authorId: userId,
 				images: {
 					create: images,
@@ -97,7 +99,7 @@ export async function createPost(
 			});
 		}
 
-		validatedData.data.content.split(/\ +/g).map(async part => {
+		content.split(/\ +/g).map(async part => {
 			if (part.match(userMentionRegexp)) {
 				const recipient = await prisma.user.findUnique({
 					where: {
@@ -124,7 +126,7 @@ export async function createPost(
 		return { success: false, error: "포스트 작성 중 오류 발생" };
 	}
 
-	revalidatePath(validatedData.data.currentPath);
+	revalidatePath(currentPath);
 
 	return { success: true };
 }

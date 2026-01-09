@@ -14,23 +14,25 @@ const formSchema = z.object({
 });
 
 export async function createAccount(initialState: any, formData: FormData) {
-	const validatedData = formSchema.safeParse({
+	const { data, success, error } = formSchema.safeParse({
 		id: formData.get("id"),
 		name: formData.get("name"),
 		email: formData.get("email"),
 		password: formData.get("password"),
 	});
 
-	if (!validatedData.success) return validatedData.error.message;
+	if (!success) return error.message;
 
-	const hashedPassword = await hashPassword(validatedData.data.password);
+	const { id, name, email, password } = data;
+
+	const hashedPassword = await hashPassword(password);
 
 	try {
 		await prisma.user.create({
 			data: {
-				handle: validatedData.data.id,
-				name: validatedData.data.name,
-				email: validatedData.data.email,
+				handle: id,
+				name,
+				email,
 				hashedPassword,
 			},
 		});
@@ -41,8 +43,8 @@ export async function createAccount(initialState: any, formData: FormData) {
 
 	try {
 		await signIn("credentials", {
-			email: validatedData.data.email,
-			password: validatedData.data.password,
+			email,
+			password,
 			redirect: false,
 		});
 	} catch (err) {

@@ -12,42 +12,48 @@ const formSchema = z.object({
 	name: z.string("올바르지 않은 이름").trim().min(1),
 	prevProfile: z.string("올바르지 않은 프로필 사진").trim().min(1),
 	currentPath: z.string("올바르지 않은 요청 URL").trim().min(1),
+	profile: z
+		.string("올바르지 않은 사진")
+		.trim()
+		.min(1)
+		.or(z.instanceof(File, { error: "올바르지 않은 사진" })),
 });
 
 export async function editProfile(initialState: any, formData: FormData) {
 	const session = await auth();
-	if (!session || !session.user || !session.user.id)
+	if (!session || !session.user)
 		return { success: false, error: "올바르지 않은 사용자" };
 
-	const validatedData = formSchema.safeParse({
+	const userId = Number(session.user.id);
+
+	const { data, error, success } = formSchema.safeParse({
 		description: formData.get("description"),
 		name: formData.get("name"),
 		prevProfile: formData.get("prevProfile"),
 		currentPath: formData.get("currentPath"),
+		profile: formData.get("profile"),
 	});
 
-	if (!validatedData.success) {
-		console.log(validatedData.error);
+	if (!success) {
+		console.log(error);
 		return {
 			success: false,
-			message: validatedData.error.message,
+			message: error.message,
 		};
 	}
 
-	const profile = formData.get("profile");
-	const prevProfile = validatedData.data.prevProfile;
-	const currentPath = validatedData.data.currentPath;
+	const { profile, prevProfile, currentPath, description, name } = data;
 
 	// 프로필 사진에 변화가 없을 때
 	if (profile === prevProfile) {
 		try {
 			await prisma.user.update({
 				where: {
-					id: Number(session.user.id),
+					id: userId,
 				},
 				data: {
-					description: validatedData.data.description,
-					name: validatedData.data.name,
+					description: description,
+					name: name,
 				},
 			});
 		} catch (err) {
@@ -75,12 +81,12 @@ export async function editProfile(initialState: any, formData: FormData) {
 
 			await prisma.user.update({
 				where: {
-					id: Number(session.user.id),
+					id: userId,
 				},
 				data: {
 					profile: defaultPfP,
-					description: validatedData.data.description,
-					name: validatedData.data.name,
+					description: description,
+					name: name,
 				},
 			});
 		} catch (err) {
@@ -108,12 +114,12 @@ export async function editProfile(initialState: any, formData: FormData) {
 
 		await prisma.user.update({
 			where: {
-				id: Number(session.user.id),
+				id: userId,
 			},
 			data: {
 				profile: dbProfilePath,
-				description: validatedData.data.description,
-				name: validatedData.data.name,
+				description: description,
+				name: name,
 			},
 		});
 	} catch (err) {
