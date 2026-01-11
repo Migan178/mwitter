@@ -2,8 +2,8 @@
 
 import Modal from "../Modal";
 import NameInput from "../signup/NameInput";
-import UserProfile from "../users/UserProfile";
 import DescriptionInput from "./DescriptionInput";
+import EditProfilePictureButton from "./EditProfilePictureButton";
 import ProfilePictureCropperModal from "./ProfilePictureCropperModal";
 import { editProfile } from "@/actions/editProfile";
 import { type UserWithoutFollowingResult } from "@/lib/services/user";
@@ -34,7 +34,6 @@ export default function ProfileEdit({
 	const [name, setName] = useState(user.name);
 	const [showCropper, setShowCropper] = useState(false);
 	const [profile, setProfile] = useState(user.profile);
-	const [showPfPMenu, setShowPfPMenu] = useState(false);
 
 	const pathname = usePathname();
 	const router = useRouter();
@@ -77,16 +76,6 @@ export default function ProfileEdit({
 		setShowCropper(true);
 	}
 
-	function handleSelectPicture() {
-		fileInputRef.current?.click();
-		setShowPfPMenu(false);
-	}
-
-	function handleResetToDefaultPicture() {
-		setProfile(defaultPfP);
-		setShowPfPMenu(false);
-	}
-
 	return (
 		<>
 			<div className="bg-white p-8 flex flex-col gap-y-8">
@@ -110,29 +99,11 @@ export default function ProfileEdit({
 					</div>
 				</div>
 				<div className="flex gap-x-2">
-					<div className="relative">
-						<button
-							onClick={() => setShowPfPMenu(!showPfPMenu)}
-							className="relative w-30 h-30 group"
-						>
-							<div className="group-hover:brightness-50 duration-200">
-								<UserProfile profile={profile} size={120} />
-							</div>
-							<span className="group-hover:opacity-100 opacity-0 top-1/2 left-1/2 -translate-1/2 absolute text-xs text-white duration-200">
-								프로필 사진 수정
-							</span>
-						</button>
-						<div
-							className={`absolute top-30 min-w-31 bg-white p-4 shadow-2xl duration-200 ${showPfPMenu ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-						>
-							<button onClick={handleResetToDefaultPicture}>
-								기본 사진 선택
-							</button>
-							<button onClick={handleSelectPicture}>
-								다른 사진 선택
-							</button>
-						</div>
-					</div>
+					<EditProfilePictureButton
+						fileInputRef={fileInputRef}
+						setProfile={setProfile}
+						profile={profile}
+					/>
 					<Form action={handleSubmit} id="profile-edit-form">
 						<input
 							type="hidden"

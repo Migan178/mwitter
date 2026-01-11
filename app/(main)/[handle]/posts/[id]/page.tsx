@@ -1,4 +1,6 @@
-import PostDetail from "@/components/posts/PostDetail";
+import PostCard from "@/components/posts/PostCard";
+import PostCreateBox from "@/components/posts/PostCreateBox";
+import PostList from "@/components/posts/PostList";
 import { auth } from "@/lib/auth";
 import {
 	getPostWithLikesAndReplies,
@@ -27,5 +29,25 @@ export default async function PostPage({
 	if (!post || post.author.handle !== handle)
 		return <h1>해당 게시글을 찾을 수 없음.</h1>;
 
-	return <PostDetail post={post} />;
+	return (
+		<div>
+			<div className="border border-gray-300 w-140">
+				<div className="p-2">
+					<PostCard post={post} />
+				</div>
+			</div>
+			<div className="border-x border-gray-300">
+				<PostCreateBox
+					parentId={post.original ? post.original.id : id}
+				/>
+			</div>
+			<div>
+				<PostList
+					posts={
+						post.original ? post.original.replies! : post.replies!
+					}
+				/>
+			</div>
+		</div>
+	);
 }

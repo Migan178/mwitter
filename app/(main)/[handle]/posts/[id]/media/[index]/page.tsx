@@ -1,4 +1,4 @@
-import PostDetail from "@/components/posts/PostDetail";
+import PostCard from "@/components/posts/PostCard";
 import PaginatedImages from "@/components/posts/images/PaginatedImages";
 import { auth } from "@/lib/auth";
 import {
@@ -40,7 +40,7 @@ export default async function PostMediaPage({
 				index={Number(index)}
 				images={images}
 			/>
-			<PostDetail post={post} />
+			<PostCard post={post} />
 		</div>
 	);
 }

@@ -122,6 +122,7 @@ export async function getAllPostsWithLikesAndReplyCount(
 					likeCount: post.original._count.likes,
 					replyCount: post.original._count.replies,
 					repostCount: post.original._count.reposts,
+					parentAuthor: post.original.parent?.author.handle,
 					images: post.original.images.map(image => ({
 						order: image.order,
 						url: image.url,
@@ -187,6 +188,7 @@ export async function getFollowingPostsWithLikesReplyCount(
 					likeCount: post.original._count.likes,
 					replyCount: post.original._count.replies,
 					repostCount: post.original._count.reposts,
+					parentAuthor: post.original.parent?.author.handle,
 					images: post.original.images.map(image => ({
 						order: image.order,
 						url: image.url,
