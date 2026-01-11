@@ -85,6 +85,7 @@ export default function PostCard({
 								postId={id}
 								authorId={author.id}
 								authorHandle={author.handle}
+								isFollowingAuthor={author.isFollowing}
 							/>
 						</div>
 					</div>

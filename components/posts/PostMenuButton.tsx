@@ -1,5 +1,6 @@
 "use client";
 
+import FollowForm from "../users/FollowForm";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { ThreeDotsVertical } from "react-bootstrap-icons";
@@ -8,10 +9,12 @@ export default function PostMenuButton({
 	postId,
 	authorId,
 	authorHandle,
+	isFollowingAuthor,
 }: {
 	postId: number;
 	authorId: number;
 	authorHandle: string;
+	isFollowingAuthor: boolean;
 }) {
 	const [showMenu, setShowMenu] = useState(false);
 	const { data: session } = useSession();
@@ -31,7 +34,15 @@ export default function PostMenuButton({
 					</>
 				) : (
 					<>
-						<button>@{authorHandle} 팔로우 하기</button>
+						<FollowForm userId={authorId}>
+							<button
+								type="submit"
+								onClick={() => setShowMenu(!showMenu)}
+							>
+								@{authorHandle} 팔로우{" "}
+								{isFollowingAuthor ? "취소" : null}하기
+							</button>
+						</FollowForm>
 						<button>@{authorHandle} 차단 하기</button>
 					</>
 				)}

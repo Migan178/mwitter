@@ -78,7 +78,13 @@ export async function getUserByHandleWithCountsAndPosts(
 		posts: user.posts.map(post => ({
 			id: post.id,
 			content: post.content,
-			author: post.author,
+			author: {
+				id: post.author.id,
+				name: post.author.name,
+				handle: post.author.handle,
+				profile: post.author.profile,
+				isFollowing: post.author.follower.length > 0,
+			},
 			isLiked: post.likes.length > 0,
 			isReposted: post.reposts.length > 0,
 			likeCount: post._count.likes,
@@ -93,7 +99,14 @@ export async function getUserByHandleWithCountsAndPosts(
 				? {
 						id: post.original.id,
 						content: post.original.content,
-						author: post.original.author,
+						author: {
+							id: post.original.author.id,
+							name: post.original.author.name,
+							handle: post.original.author.handle,
+							profile: post.original.author.profile,
+							isFollowing:
+								post.original.author.follower.length > 0,
+						},
 						isLiked: post.original.likes.length > 0,
 						isReposted: post.original.reposts.length > 0,
 						likeCount: post.original._count.likes,
