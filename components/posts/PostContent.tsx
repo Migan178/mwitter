@@ -13,7 +13,7 @@ export default function PostContent({ content }: { content: string }) {
 						<Link
 							href={`/${part.replace("@", "")}`}
 							key={i}
-							className="mr-1 text-blue-500"
+							className="text-blue-500"
 						>
 							{`${part} `}
 						</Link>
