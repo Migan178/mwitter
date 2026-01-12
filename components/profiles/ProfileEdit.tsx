@@ -7,6 +7,7 @@ import EditProfilePictureButton from "./EditProfilePictureButton";
 import ProfilePictureCropperModal from "./ProfilePictureCropperModal";
 import { editProfile } from "@/actions/editProfile";
 import { type UserWithoutFollowingResult } from "@/lib/services/user";
+import useUserDataStore from "@/stores/userData";
 import Form from "next/form";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -34,6 +35,8 @@ export default function ProfileEdit({
 	const [name, setName] = useState(user.name);
 	const [showCropper, setShowCropper] = useState(false);
 	const [profile, setProfile] = useState(user.profile);
+	const setUserDataName = useUserDataStore(state => state.setName);
+	const setUserDataProfile = useUserDataStore(state => state.setProfile);
 
 	const pathname = usePathname();
 	const router = useRouter();
@@ -46,26 +49,32 @@ export default function ProfileEdit({
 	}, [state]);
 
 	async function handleSubmit(formData: FormData) {
+		let filename: string | undefined;
+
 		// 만약 프로필 사진에 변동이 있다면 (기본 사진 X)
 		if (profile !== user.profile && profile !== defaultPfP) {
+			filename = `${user.id}_profile.png`;
+
 			const res = await fetch(profile);
 			const blob = await res.blob();
 
 			formData.set(
 				"profile",
-				new File([blob], `${user.id}_profile.png`, {
+				new File([blob], filename, {
 					type: "image/png",
 				}),
 			);
-
-			formAction(formData);
-			return;
+		} else {
+			// 만약 프로필 사진에 변동이 없거나, 기본 사진으로 선택했을 때
+			formData.set("profile", profile);
 		}
 
-		// 만약 프로필 사진에 변동이 없거나, 기본 사진으로 선택했을 때
-		formData.set("profile", profile);
-
 		formAction(formData);
+
+		if (state.success) {
+			if (filename) setUserDataProfile(`/uploads/profile/${filename}`);
+			setUserDataName(formData.get("name")!.toString());
+		}
 	}
 
 	function onFileChange(e: ChangeEvent<HTMLInputElement>) {
