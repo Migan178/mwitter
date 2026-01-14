@@ -1,5 +1,23 @@
 import prisma from "../prisma";
-import { getQueryWithLikesAndReplyCount, PostWithOriginalResult } from "./post";
+import {
+	getQueryWithLikesAndReplyCount,
+	type PostWithOriginalResult,
+	refineMultiplePostsWithOriginal,
+} from "./post";
+
+// export enum FollowStatus {
+// 	NotFollowing = 1 << 0,
+// 	Requested = 1 << 1,
+// 	Following = 1 << 2,
+// }
+
+// export class FollowStatus {
+// 	public static NotFollowing = 1 << 0;
+// 	public static Requested = 1 << 1;
+// 	public static Following = 1 << 2;
+// }
+
+export type FollowStatus = "NOT_FOLLOWING" | "REQUESTED" | "FOLLOWING";
 
 export interface UserResult {
 	id: number;
@@ -11,16 +29,88 @@ export interface UserResult {
 	followerCount?: number;
 	followingCount?: number;
 	postCount?: number;
-	isFollowing: boolean;
+	followStatus: FollowStatus;
+	protected: boolean;
 }
 
+export type UserWithoutFollowingResult = Omit<UserResult, "followStatus">;
+
 export interface ProfileResult {
+	id: number;
 	name: string;
 	profile: string;
 	handle: string;
+	protected: boolean;
 }
 
-export type UserWithoutFollowingResult = Omit<UserResult, "isFollowing">;
+export type UnrefinedUser = Awaited<
+	ReturnType<typeof getUnrefinedUser>
+>[number];
+
+export function getUserQuery(userId: number) {
+	return {
+		id: true,
+		name: true,
+		profile: true,
+		handle: true,
+		description: true,
+		protected: true,
+		follower: {
+			select: {
+				followerId: true,
+			},
+			where: {
+				followerId: userId,
+			},
+		},
+		followRequests: {
+			select: {
+				followerId: true,
+			},
+			where: {
+				followerId: userId,
+			},
+		},
+	};
+}
+
+const {
+	follower: _,
+	followRequests: __,
+	...userWithoutFollowingQuery
+} = getUserQuery(0);
+
+export { userWithoutFollowingQuery };
+
+async function getUnrefinedUser() {
+	return await prisma.user.findMany({
+		select: {
+			...getUserQuery(0),
+		},
+	});
+}
+
+export function refineSingleUser(data: UnrefinedUser): UserResult {
+	let followStatus: FollowStatus;
+
+	if (data.follower.length > 0) followStatus = "FOLLOWING";
+	else if (data.followRequests.length > 0) followStatus = "REQUESTED";
+	else followStatus = "NOT_FOLLOWING";
+
+	return {
+		id: data.id,
+		name: data.name,
+		profile: data.profile,
+		handle: data.handle,
+		description: data.description,
+		protected: data.protected,
+		followStatus,
+	};
+}
+
+export function refineMultipleUsers(data: UnrefinedUser[]): UserResult[] {
+	return data.map(data => refineSingleUser(data));
+}
 
 export async function getUserByHandleWithCountsAndPosts(
 	handle: string,
@@ -28,19 +118,7 @@ export async function getUserByHandleWithCountsAndPosts(
 ): Promise<UserResult | null> {
 	const user = await prisma.user.findUnique({
 		select: {
-			id: true,
-			name: true,
-			handle: true,
-			profile: true,
-			description: true,
-			follower: {
-				select: {
-					followerId: true,
-				},
-				where: {
-					followerId: sessionUserId,
-				},
-			},
+			...getUserQuery(sessionUserId),
 			_count: {
 				select: {
 					follower: true,
@@ -70,61 +148,11 @@ export async function getUserByHandleWithCountsAndPosts(
 	if (!user) return null;
 
 	return {
-		name: user.name,
-		id: user.id,
-		handle: user.handle,
-		profile: user.profile,
-		description: user.description,
-		posts: user.posts.map(post => ({
-			id: post.id,
-			content: post.content,
-			author: {
-				id: post.author.id,
-				name: post.author.name,
-				handle: post.author.handle,
-				profile: post.author.profile,
-				isFollowing: post.author.follower.length > 0,
-			},
-			isLiked: post.likes.length > 0,
-			isReposted: post.reposts.length > 0,
-			likeCount: post._count.likes,
-			replyCount: post._count.replies,
-			repostCount: post._count.reposts,
-			images: post.images.map(image => ({
-				order: image.order,
-				url: image.url,
-			})),
-			createdAt: post.createdAt,
-			original: post.original
-				? {
-						id: post.original.id,
-						content: post.original.content,
-						author: {
-							id: post.original.author.id,
-							name: post.original.author.name,
-							handle: post.original.author.handle,
-							profile: post.original.author.profile,
-							isFollowing:
-								post.original.author.follower.length > 0,
-						},
-						isLiked: post.original.likes.length > 0,
-						isReposted: post.original.reposts.length > 0,
-						likeCount: post.original._count.likes,
-						replyCount: post.original._count.replies,
-						repostCount: post.original._count.reposts,
-						parentAuthor: post.original.parent?.author.handle,
-						images: post.original.images.map(image => ({
-							order: image.order,
-							url: image.url,
-						})),
-						createdAt: post.original.createdAt,
-					}
-				: undefined,
-		})),
+		...refineSingleUser(user),
+		posts: refineMultiplePostsWithOriginal(user.posts),
 		followerCount: user._count.follower,
 		followingCount: user._count.following,
 		postCount: user._count.posts,
-		isFollowing: user.follower.length > 0,
 	};
 }
 
@@ -138,19 +166,7 @@ export async function getUsersWithFollowing(
 				select: {
 					following: {
 						select: {
-							id: true,
-							handle: true,
-							name: true,
-							description: true,
-							profile: true,
-							follower: {
-								select: {
-									followerId: true,
-								},
-								where: {
-									followerId: sessionId,
-								},
-							},
+							...getUserQuery(sessionId),
 						},
 					},
 				},
@@ -163,14 +179,9 @@ export async function getUsersWithFollowing(
 
 	if (!user) return [];
 
-	return user.following.map(({ following }) => ({
-		id: following.id,
-		name: following.name,
-		profile: following.profile,
-		handle: following.handle,
-		description: following.description,
-		isFollowing: following.follower.length > 0,
-	}));
+	return refineMultipleUsers(
+		user.following.map(({ following }) => following),
+	);
 }
 
 export async function getUsersWithFollowers(
@@ -183,19 +194,7 @@ export async function getUsersWithFollowers(
 				select: {
 					follower: {
 						select: {
-							id: true,
-							handle: true,
-							name: true,
-							description: true,
-							profile: true,
-							follower: {
-								select: {
-									followerId: true,
-								},
-								where: {
-									followerId: sessionId,
-								},
-							},
+							...getUserQuery(sessionId),
 						},
 					},
 				},
@@ -208,62 +207,34 @@ export async function getUsersWithFollowers(
 
 	if (!user) return [];
 
-	return user.follower.map(({ follower }) => ({
-		id: follower.id,
-		name: follower.name,
-		handle: follower.handle,
-		profile: follower.profile,
-		description: follower.description,
-		isFollowing: follower.follower.length > 0,
-	}));
+	return refineMultipleUsers(user.follower.map(({ follower }) => follower));
 }
 
 export async function getUsersWithIsFollowingByQuery(
-	query: string,
+	searchQuery: string,
 	sessionId: number,
 ): Promise<UserResult[]> {
 	const users = await prisma.user.findMany({
 		select: {
-			handle: true,
-			id: true,
-			name: true,
-			description: true,
-			profile: true,
-			follower: {
-				select: {
-					followerId: true,
-				},
-				where: {
-					followerId: sessionId,
-				},
-			},
+			...getUserQuery(sessionId),
 		},
 		where: {
 			OR: [
 				{
 					name: {
-						contains: query,
+						contains: searchQuery,
 					},
 				},
 				{
 					handle: {
-						contains: query,
+						contains: searchQuery,
 					},
 				},
 			],
 		},
 	});
 
-	return users.map(
-		({ handle, id, name, follower, description, profile }) => ({
-			handle,
-			id,
-			profile,
-			name,
-			description,
-			isFollowing: follower.length > 0,
-		}),
-	);
+	return refineMultipleUsers(users);
 }
 
 export async function getUserById(
@@ -274,11 +245,7 @@ export async function getUserById(
 			id,
 		},
 		select: {
-			id: true,
-			handle: true,
-			profile: true,
-			name: true,
-			description: true,
+			...userWithoutFollowingQuery,
 		},
 	});
 
@@ -291,9 +258,7 @@ export async function getProfileById(id: number): Promise<ProfileResult> {
 			id,
 		},
 		select: {
-			profile: true,
-			name: true,
-			handle: true,
+			...userWithoutFollowingQuery,
 		},
 	});
 

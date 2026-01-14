@@ -5,12 +5,20 @@ import FollowButton from "./FollowButton";
 import LoginToFollowButton from "./LoginToFollowButton";
 import UserProfile from "./UserProfile";
 import Username from "./Username";
-import { UserResult } from "@/lib/services/user";
+import { type UserResult } from "@/lib/services/user";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 export default function UserListItem({
-	user: { handle, name, id, description, isFollowing, profile },
+	user: {
+		handle,
+		name,
+		id,
+		description,
+		followStatus: isFollowing,
+		profile,
+		protected: isProtected,
+	},
 }: {
 	user: UserResult;
 }) {
@@ -27,12 +35,20 @@ export default function UserListItem({
 					<UserProfile profile={profile} size={40} />
 				</Link>
 				<Link href={`/${handle}`} className="hover:underline">
-					<Username name={name} handle={handle} />
+					<Username
+						name={name}
+						handle={handle}
+						isProtected={isProtected}
+					/>
 					<Description description={description} />
 				</Link>
 			</div>
 			{userId && userId !== id ? (
-				<FollowButton userId={id} initialIsFollowing={isFollowing} />
+				<FollowButton
+					userId={id}
+					protected={isProtected}
+					initialFollowStatus={isFollowing}
+				/>
 			) : null}
 			{!userId ? <LoginToFollowButton /> : null}
 		</div>

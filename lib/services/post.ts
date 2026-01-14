@@ -1,15 +1,10 @@
 import prisma from "../prisma";
+import { type ProfileResult } from "./user";
 
 export interface PostResult {
 	id: number;
 	content: string;
-	author: {
-		id: number;
-		name: string;
-		handle: string;
-		profile: string;
-		isFollowing: boolean;
-	};
+	author: ProfileResult & { isFollowing: boolean };
 	isLiked: boolean;
 	likeCount: number;
 	replyCount: number;
@@ -39,6 +34,7 @@ export function getQueryWithLikesAndReplyCount(userId: number) {
 				name: true,
 				handle: true,
 				profile: true,
+				protected: true,
 				follower: {
 					select: {
 						followerId: true,
@@ -91,6 +87,83 @@ export function getQueryWithLikesAndReplyCount(userId: number) {
 	};
 }
 
+type UnrefinedPost = Awaited<ReturnType<typeof getUnrefinedPost>>[number];
+type UnrefinedPostWithOriginal = UnrefinedPost & {
+	original: UnrefinedPost | null;
+};
+
+export function getWhereQueryWithProtected(userId: number) {
+	return [
+		{
+			protected: false,
+		},
+		{
+			follower: {
+				some: {
+					followerId: userId,
+				},
+			},
+		},
+		{
+			id: userId,
+		},
+	];
+}
+
+async function getUnrefinedPost() {
+	return await prisma.post.findMany({
+		select: {
+			...getQueryWithLikesAndReplyCount(0),
+		},
+	});
+}
+
+export function refineSinglePost(data: UnrefinedPost): PostResult {
+	return {
+		id: data.id,
+		content: data.content,
+		author: {
+			id: data.author.id,
+			name: data.author.name,
+			handle: data.author.handle,
+			profile: data.author.profile,
+			protected: data.author.protected,
+			isFollowing: !!data.author.follower.length,
+		},
+		isLiked: data.likes.length > 0,
+		isReposted: data.reposts.length > 0,
+		likeCount: data._count.likes,
+		replyCount: data._count.replies,
+		repostCount: data._count.reposts,
+		images: data.images.map(image => ({
+			order: image.order,
+			url: image.url,
+		})),
+		createdAt: data.createdAt,
+	};
+}
+
+export function refineSinglePostWithOriginal(
+	data: UnrefinedPostWithOriginal,
+): PostWithOriginalResult {
+	const { original, ...post } = data;
+
+	return {
+		...refineSinglePost(post),
+		original: original ? refineSinglePost(original) : undefined,
+	};
+}
+
+export function refineMultiplePosts(data: UnrefinedPost[]): PostResult[] {
+	return data.map(data => refineSinglePost(data));
+}
+
+export function refineMultiplePostsWithOriginal(
+	data: UnrefinedPostWithOriginal[],
+): PostWithOriginalResult[] {
+	return data.map(data => refineSinglePostWithOriginal(data));
+}
+
 export async function getAllPostsWithLikesAndReplyCount(
 	userId: number,
 ): Promise<PostWithOriginalResult[]> {
@@ -105,57 +178,16 @@ export async function getAllPostsWithLikesAndReplyCount(
 		},
 		where: {
 			parentId: null,
+			author: {
+				OR: [...getWhereQueryWithProtected(userId)],
+			},
 		},
 		orderBy: {
 			createdAt: "desc",
 		},
 	});
 
-	return posts.map(post => ({
-		id: post.id,
-		content: post.content,
-		author: {
-			id: post.author.id,
-			name: post.author.name,
-			handle: post.author.handle,
-			profile: post.author.profile,
-			isFollowing: post.author.follower.length > 0,
-		},
-		isLiked: post.likes.length > 0,
-		isReposted: post.reposts.length > 0,
-		likeCount: post._count.likes,
-		replyCount: post._count.replies,
-		repostCount: post._count.reposts,
-		original: post.original
-			? {
-					id: post.original.id,
-					content: post.original.content,
-					author: {
-						id: post.original.author.id,
-						name: post.original.author.name,
-						handle: post.original.author.handle,
-						profile: post.original.author.profile,
-						isFollowing: post.original.author.follower.length > 0,
-					},
-					isLiked: post.original.likes.length > 0,
-					isReposted: post.original.reposts.length > 0,
-					likeCount: post.original._count.likes,
-					replyCount: post.original._count.replies,
-					repostCount: post.original._count.reposts,
-					parentAuthor: post.original.parent?.author.handle,
-					images: post.original.images.map(image => ({
-						order: image.order,
-						url: image.url,
-					})),
-					createdAt: post.original.createdAt,
-				}
-			: undefined,
-		images: post.images.map(image => ({
-			order: image.order,
-			url: image.url,
-		})),
-		createdAt: post.createdAt,
-	}));
+	return refineMultiplePostsWithOriginal(posts);
 }
 
 export async function getFollowingPostsWithLikesReplyCount(
@@ -167,9 +199,6 @@ export async function getFollowingPostsWithLikesReplyCount(
 			original: {
 				select: {
 					...getQueryWithLikesAndReplyCount(userId),
-					replies: {
-						select: { ...getQueryWithLikesAndReplyCount(userId) },
-					},
 				},
 			},
 		},
@@ -189,51 +218,7 @@ export async function getFollowingPostsWithLikesReplyCount(
 		},
 	});
 
-	return posts.map(post => ({
-		id: post.id,
-		content: post.content,
-		author: {
-			id: post.author.id,
-			name: post.author.name,
-			handle: post.author.handle,
-			profile: post.author.profile,
-			isFollowing: post.author.follower.length > 0,
-		},
-		isLiked: post.likes.length > 0,
-		isReposted: post.reposts.length > 0,
-		likeCount: post._count.likes,
-		replyCount: post._count.replies,
-		repostCount: post._count.reposts,
-		original: post.original
-			? {
-					id: post.original.id,
-					content: post.original.content,
-					author: {
-						id: post.original.author.id,
-						name: post.original.author.name,
-						handle: post.original.author.handle,
-						profile: post.original.author.profile,
-						isFollowing: post.original.author.follower.length > 0,
-					},
-					isLiked: post.original.likes.length > 0,
-					isReposted: post.original.reposts.length > 0,
-					likeCount: post.original._count.likes,
-					replyCount: post.original._count.replies,
-					repostCount: post.original._count.reposts,
-					parentAuthor: post.original.parent?.author.handle,
-					images: post.original.images.map(image => ({
-						order: image.order,
-						url: image.url,
-					})),
-					createdAt: post.original.createdAt,
-				}
-			: undefined,
-		images: post.images.map(image => ({
-			order: image.order,
-			url: image.url,
-		})),
-		createdAt: post.createdAt,
-	}));
+	return refineMultiplePostsWithOriginal(posts);
 }
 
 export async function getPostWithLikesAndReplies(
@@ -259,98 +244,23 @@ export async function getPostWithLikesAndReplies(
 		},
 		where: {
 			id,
+			author: {
+				OR: [...getWhereQueryWithProtected(userId)],
+			},
 		},
 	});
 
 	if (!post) return null;
 
+	const { replies, ...postWithoutReplies } = post;
+
 	return {
-		id,
-		content: post.content,
-		author: {
-			id: post.author.id,
-			name: post.author.name,
-			handle: post.author.handle,
-			profile: post.author.profile,
-			isFollowing: post.author.follower.length > 0,
-		},
-		isLiked: post.likes.length > 0,
-		isReposted: post.reposts.length > 0,
-		likeCount: post._count.likes,
-		replyCount: post._count.replies,
-		repostCount: post._count.reposts,
-		parentAuthor: post.parent?.author.handle,
-		original: post.original
-			? {
-					id: post.original.id,
-					content: post.original.content,
-					author: {
-						id: post.original.author.id,
-						name: post.original.author.name,
-						handle: post.original.author.handle,
-						profile: post.original.author.profile,
-						isFollowing: post.original.author.follower.length > 0,
-					},
-					isLiked: post.original.likes.length > 0,
-					isReposted: post.original.reposts.length > 0,
-					likeCount: post.original._count.likes,
-					replies: post.original.replies.map(post => ({
-						id: post.id,
-						content: post.content,
-						author: {
-							id: post.author.id,
-							name: post.author.name,
-							handle: post.author.handle,
-							profile: post.author.profile,
-							isFollowing: post.author.follower.length > 0,
-						},
-						isLiked: post.likes.length > 0,
-						isReposted: post.reposts.length > 0,
-						likeCount: post._count.likes,
-						replyCount: post._count.replies,
-						repostCount: post._count.reposts,
-						images: post.images.map(image => ({
-							order: image.order,
-							url: image.url,
-						})),
-						createdAt: post.createdAt,
-					})),
-					replyCount: post.original._count.replies,
-					repostCount: post.original._count.reposts,
-					parentAuthor: post.original.parent?.author.handle,
-					images: post.original.images.map(image => ({
-						order: image.order,
-						url: image.url,
-					})),
-					createdAt: post.original.createdAt,
-				}
-			: undefined,
-		replies: post.replies.map(post => ({
-			id: post.id,
-			content: post.content,
-			author: {
-				id: post.author.id,
-				name: post.author.name,
-				handle: post.author.handle,
-				profile: post.author.profile,
-				isFollowing: post.author.follower.length > 0,
-			},
-			isLiked: post.likes.length > 0,
-			isReposted: post.reposts.length > 0,
-			likeCount: post._count.likes,
-			replyCount: post._count.replies,
-			repostCount: post._count.reposts,
-			images: post.images.map(image => ({
-				order: image.order,
-				url: image.url,
-			})),
-			createdAt: post.createdAt,
-		})),
-		images: post.images.map(image => ({
-			order: image.order,
-			url: image.url,
-		})),
-		createdAt: post.createdAt,
+		...refineSinglePostWithOriginal(postWithoutReplies),
+		replies: refineMultiplePosts(
+			postWithoutReplies.original
+				? postWithoutReplies.original.replies
+				: replies,
+		),
 	};
 }
 
@@ -371,25 +281,5 @@ export async function getPostsWithLikesAndReplyCountByQuery(
 		},
 	});
 
-	return posts.map(post => ({
-		id: post.id,
-		content: post.content,
-		author: {
-			id: post.author.id,
-			name: post.author.name,
-			handle: post.author.handle,
-			profile: post.author.profile,
-			isFollowing: post.author.follower.length > 0,
-		},
-		isLiked: post.likes.length > 0,
-		isReposted: post.reposts.length > 0,
-		likeCount: post._count.likes,
-		replyCount: post._count.replies,
-		repostCount: post._count.reposts,
-		images: post.images.map(image => ({
-			order: image.order,
-			url: image.url,
-		})),
-		createdAt: post.createdAt,
-	}));
+	return refineMultiplePosts(posts);
 }

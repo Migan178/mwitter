@@ -17,11 +17,13 @@ export default function UserDataInitializer({
 	const setName = useUserDataStore(state => state.setName);
 	const setProfile = useUserDataStore(state => state.setProfile);
 	const setHandle = useUserDataStore(state => state.setHandle);
+	const setProtected = useUserDataStore(state => state.setProtected);
 
 	if (status === "authenticated" && user) {
 		setName(user.name);
 		setProfile(user.profile);
 		setHandle(user.handle);
+		setProtected(user.protected);
 	}
 
 	return children;

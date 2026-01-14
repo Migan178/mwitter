@@ -14,9 +14,11 @@ export default async function User({
 }: {
 	params: Promise<{ handle: string }>;
 }) {
+	let user: UserResult | null;
+
 	const { handle } = await params;
 	const session = await auth();
-	let user: UserResult | null;
+	const sessionId = Number(session?.user?.id || 0);
 
 	let showFollowButton,
 		showLoginToFollowButton,
@@ -48,16 +50,22 @@ export default async function User({
 					{showFollowButton ? (
 						<FollowButton
 							userId={user.id}
-							initialIsFollowing={user.isFollowing}
+							protected={user.protected}
+							initialFollowStatus={user.followStatus}
 						/>
 					) : null}
 					{showLoginToFollowButton ? <LoginToFollowButton /> : null}
 				</div>
 				<div>
-					{user.posts ? (
+					{user.posts &&
+					(user.id === sessionId ||
+						!user.protected ||
+						user.followStatus === "FOLLOWING") ? (
 						<div className="w-140">
 							<PostList posts={user.posts} />
 						</div>
+					) : user.protected ? (
+						<h1>해당 계정의 게시글을 볼려면 팔로우</h1>
 					) : (
 						<h1>게시글 없음</h1>
 					)}

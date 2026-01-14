@@ -13,6 +13,7 @@ export default function UserInfo({
 		description,
 		postCount,
 		profile,
+		protected: isProtected,
 	},
 }: {
 	user: UserResult;
@@ -24,7 +25,7 @@ export default function UserInfo({
 	return (
 		<div>
 			<UserProfile profile={profile} />
-			<Username name={name} handle={handle} />
+			<Username name={name} handle={handle} isProtected={isProtected} />
 			<Description description={description} />
 			<div className="flex gap-x-2">
 				<Link href={`/${handle}/followers`}>

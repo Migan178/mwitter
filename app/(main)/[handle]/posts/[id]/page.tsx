@@ -12,15 +12,14 @@ export default async function PostPage({
 }: {
 	params: Promise<{ id: number; handle: string }>;
 }) {
-	const session = await auth();
-	const { id, handle } = await params;
 	let post: PostWithOriginalResult | null;
 
+	const session = await auth();
+	const { id, handle } = await params;
+	const sessionId = Number(session?.user?.id || 0);
+
 	try {
-		post = await getPostWithLikesAndReplies(
-			Number(id),
-			session ? Number(session.user?.id) : 0,
-		);
+		post = await getPostWithLikesAndReplies(Number(id), sessionId);
 	} catch (err) {
 		console.log(err);
 		return <h1>게시글 로드 중 문제 발생.</h1>;
@@ -28,6 +27,13 @@ export default async function PostPage({
 
 	if (!post || post.author.handle !== handle)
 		return <h1>해당 게시글을 찾을 수 없음.</h1>;
+
+	if (
+		post.author.protected &&
+		post.author.id !== sessionId &&
+		!post.author.isFollowing
+	)
+		return <h1>게시글을 볼려면 해당 유저를 팔로우</h1>;
 
 	return (
 		<div>

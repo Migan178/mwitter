@@ -1,6 +1,10 @@
 import prisma from "../prisma";
-import { getQueryWithLikesAndReplyCount, type PostResult } from "./post";
-import { UserResult } from "./user";
+import {
+	getQueryWithLikesAndReplyCount,
+	refineSinglePost,
+	type PostResult,
+} from "./post";
+import { getUserQuery, refineSingleUser, type UserResult } from "./user";
 import type { NotificationType } from "@/app/generated/prisma/enums";
 
 export interface NotificationResult {
@@ -27,19 +31,7 @@ export async function getNotificationsByRecipientId(
 			},
 			sender: {
 				select: {
-					id: true,
-					name: true,
-					handle: true,
-					profile: true,
-					description: true,
-					follower: {
-						select: {
-							followerId: true,
-						},
-						where: {
-							followerId: recipientId,
-						},
-					},
+					...getUserQuery(recipientId),
 				},
 			},
 		},
@@ -52,31 +44,7 @@ export async function getNotificationsByRecipientId(
 		id,
 		isRead,
 		type,
-		sender: {
-			id: sender.id,
-			name: sender.name,
-			handle: sender.handle,
-			description: sender.description,
-			profile: sender.profile,
-			isFollowing: sender.follower.length > 0,
-		},
-		post: post
-			? {
-					id: post.id,
-					content: post.content,
-					author: post.author,
-					isLiked: post.likes.length > 0,
-					isReposted: post.reposts.length > 0,
-					likeCount: post._count.likes,
-					replyCount: post._count.replies,
-					repostCount: post._count.reposts,
-					parentAuthor: post.parent?.author.handle,
-					images: post.images.map(image => ({
-						url: image.url,
-						order: image.order,
-					})),
-					createdAt: post.createdAt,
-				}
-			: null,
+		sender: refineSingleUser(sender),
+		post: post ? refineSinglePost(post) : null,
 	}));
 }

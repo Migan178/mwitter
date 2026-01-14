@@ -78,6 +78,7 @@ export default function PostCard({
 							<Username
 								name={author.name}
 								handle={author.handle}
+								isProtected={author.protected}
 							/>
 						</Link>
 						<div className="relative z-20 w-fit">
