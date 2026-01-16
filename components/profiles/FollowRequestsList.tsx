@@ -18,7 +18,7 @@ export default function FollowRequestsList({
 
 	if (!isProtected) {
 		return (
-			<div className="w-140 border border-gray-300 p-2">
+			<div className="w-140 gray-border p-2">
 				<h1>해당 기능은 보호된 계정만 사용 가능</h1>
 			</div>
 		);
@@ -26,7 +26,7 @@ export default function FollowRequestsList({
 
 	if (!requests.length) {
 		return (
-			<div className="w-140 border border-gray-300 p-2">
+			<div className="w-140 gray-border p-2">
 				<h1>대기 중인 팔로우 요청이 없음.</h1>
 			</div>
 		);
@@ -34,7 +34,7 @@ export default function FollowRequestsList({
 
 	return (
 		<>
-			<ul className="w-140 border border-gray-300">
+			<ul className="w-140 gray-border">
 				{requests.map((user, i) => (
 					<li key={user.id}>
 						<FollowRequest

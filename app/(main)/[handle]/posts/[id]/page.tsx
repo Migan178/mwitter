@@ -37,7 +37,7 @@ export default async function PostPage({
 
 	return (
 		<div>
-			<div className="border border-gray-300 w-140">
+			<div className="gray-border w-140">
 				<div className="p-2">
 					<PostCard post={post} />
 				</div>

@@ -9,11 +9,14 @@ export default function SwitchSearchTabButton() {
 	);
 
 	return (
-		<div className="flex gap-x-1">
-			<button onClick={setPostsSearch} className="hover:cursor-pointer">
+		<div className="flex">
+			<button
+				onClick={setPostsSearch}
+				className="w-1/2 border-r border-gray-300 p-2"
+			>
 				게시글 {currentTab === SearchTabEnum.Posts ? "(선택됨)" : null}
 			</button>
-			<button onClick={setUsersSearch} className="hover:cursor-pointer">
+			<button onClick={setUsersSearch} className="w-1/2 p-2">
 				유저 {currentTab === SearchTabEnum.Users ? "(선택됨)" : null}
 			</button>
 		</div>

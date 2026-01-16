@@ -78,7 +78,7 @@ export default function Notification({
 								</span>
 								님이 당신을 팔로우 합니다.
 							</p>
-							<div className="border border-gray-300 px-8 py-4 w-80 h-20">
+							<div className="border border-gray-300 px-6 py-2 w-80 h-20">
 								<UserListItem user={sender} />
 							</div>
 						</div>

@@ -1,6 +1,5 @@
 "use client";
 
-import SearchBox from "./search/SearchBox";
 import useUserDataStore from "@/stores/userData";
 import Link from "next/link";
 
@@ -14,7 +13,7 @@ export default function Navbar() {
 				<Link href="/">
 					<h1 className="text-2xl font-bold">Mwitter</h1>
 				</Link>
-				<SearchBox />
+				<Link href="/search">검색</Link>
 				<Link href={`/${encodeURIComponent(handle)}`}>프로필</Link>
 				{isProtected ? (
 					<Link href="/follow-requests">팔로우 요청</Link>

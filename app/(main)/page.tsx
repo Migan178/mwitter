@@ -1,4 +1,4 @@
-import LoginButton from "@/components/LoginButton";
+import LoginButton from "@/components/buttons/LoginButton";
 import PostCreateBox from "@/components/posts/PostCreateBox";
 import PostsWrapper from "@/components/posts/PostsWrapper";
 import SwitchPostsTabButton from "@/components/posts/SwitchPostsTabButton";

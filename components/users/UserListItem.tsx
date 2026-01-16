@@ -28,7 +28,7 @@ export default function UserListItem({
 	const userId = session ? Number(session.user?.id) : 0;
 
 	return (
-		<div className="flex justify-between">
+		<div className="flex justify-between p-2">
 			<div className="flex gap-x-2">
 				<Link
 					href={`/${handle}`}

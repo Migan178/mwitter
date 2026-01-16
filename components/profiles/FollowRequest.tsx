@@ -1,12 +1,12 @@
 "use client";
 
-import AcceptButton from "../AcceptButton";
-import DeclineButton from "../DeclineButton";
+import AcceptButton from "../buttons/AcceptButton";
+import DeclineButton from "../buttons/DeclineButton";
 import UserListItem from "../users/UserListItem";
 import { acceptFollow } from "@/actions/follow/requests/acceptFollow";
 import { declineFollow } from "@/actions/follow/requests/declineFollow";
 import { type ProfileResult } from "@/lib/services/user";
-import { startTransition, useActionState, useEffect, useState } from "react";
+import { startTransition, useActionState, useEffect } from "react";
 
 export default function FollowRequest({
 	user,
