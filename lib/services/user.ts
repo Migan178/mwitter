@@ -5,18 +5,6 @@ import {
 	refineMultiplePostsWithOriginal,
 } from "./post";
 
-// export enum FollowStatus {
-// 	NotFollowing = 1 << 0,
-// 	Requested = 1 << 1,
-// 	Following = 1 << 2,
-// }
-
-// export class FollowStatus {
-// 	public static NotFollowing = 1 << 0;
-// 	public static Requested = 1 << 1;
-// 	public static Following = 1 << 2;
-// }
-
 export type FollowStatus = "NOT_FOLLOWING" | "REQUESTED" | "FOLLOWING";
 
 export interface UserResult {
@@ -41,6 +29,7 @@ export interface ProfileResult {
 	profile: string;
 	handle: string;
 	protected: boolean;
+	description: string | null;
 }
 
 export type UnrefinedUser = Awaited<
@@ -82,6 +71,7 @@ const {
 
 export { userWithoutFollowingQuery };
 
+/** @description 이 함수는 타입을 위해 있음. 절대 사용 금지. */
 async function getUnrefinedUser() {
 	return await prisma.user.findMany({
 		select: {
@@ -263,4 +253,21 @@ export async function getProfileById(id: number): Promise<ProfileResult> {
 	});
 
 	return user!;
+}
+
+export async function getFollowRequestsById(
+	id: number,
+): Promise<ProfileResult[]> {
+	const users = await prisma.followRequest.findMany({
+		where: {
+			followingId: id,
+		},
+		select: {
+			follower: {
+				select: { ...userWithoutFollowingQuery },
+			},
+		},
+	});
+
+	return users.map(({ follower }) => follower);
 }

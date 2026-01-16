@@ -110,6 +110,7 @@ export function getWhereQueryWithProtected(userId: number) {
 	];
 }
 
+/** @description 이 함수는 타입을 위해 있음. 절대 사용 금지. */
 async function getUnrefinedPost() {
 	return await prisma.post.findMany({
 		select: {

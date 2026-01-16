@@ -1,4 +1,4 @@
-import { toggleFollow } from "@/actions/toggleFollow";
+import { toggleFollow } from "@/actions/follow/toggleFollow";
 import Form from "next/form";
 
 export default function FollowForm({

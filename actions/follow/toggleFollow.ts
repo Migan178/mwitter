@@ -1,5 +1,7 @@
 "use server";
 
+import { followUser } from "./followUser";
+import { unfollowUser } from "./unfollowUser";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import * as z from "zod";
@@ -66,21 +68,9 @@ export async function toggleFollow(formData: FormData) {
 		}
 
 		if (user.follower.length > 0) {
-			await prisma.following.delete({
-				where: {
-					followerId_followingId: {
-						followerId: sessionId,
-						followingId: userId,
-					},
-				},
-			});
-
-			await prisma.notification.deleteMany({
-				where: {
-					senderId: sessionId,
-					recipientId: userId,
-					type: "FOLLOW",
-				},
+			await unfollowUser({
+				followerId: sessionId,
+				followingId: userId,
 			});
 
 			return;
@@ -97,19 +87,9 @@ export async function toggleFollow(formData: FormData) {
 			return;
 		}
 
-		await prisma.following.create({
-			data: {
-				followerId: sessionId,
-				followingId: userId,
-			},
-		});
-
-		await prisma.notification.create({
-			data: {
-				senderId: sessionId,
-				recipientId: userId,
-				type: "FOLLOW",
-			},
+		await followUser({
+			followerId: sessionId,
+			followingId: userId,
 		});
 	} catch (err) {
 		console.log(err);
