@@ -1,5 +1,6 @@
 "use client";
 
+import ToastAlert from "../ToastAlert";
 import { toggleProtected } from "@/actions/toggleProtected";
 import useUserDataStore from "@/stores/userData";
 import { useActionState, useEffect, useState } from "react";
@@ -12,12 +13,20 @@ export default function SetProtectedSwitch() {
 	);
 
 	const [localProtected, setLocalProtected] = useState(globalProtected);
-	const [success, action] = useActionState(toggleProtected, true);
+	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+	const [success, action] = useActionState(toggleProtected, null);
 
 	useEffect(() => {
+		if (typeof success !== "boolean") return;
+
 		if (!success) {
 			setLocalProtected(!localProtected);
-			return;
+			setErrorMessage("보호된 계정으로 변경하다 오류 발생");
+
+			const timeout = setTimeout(() => setErrorMessage(null), 4000);
+
+			return () => clearTimeout(timeout);
 		}
 
 		toggleGlobalProtected();
@@ -29,9 +38,12 @@ export default function SetProtectedSwitch() {
 	}
 
 	return (
-		<label className="w-full flex justify-between">
-			<span className="text-xl">계정 비공개</span>
-			<Switch onChange={handleChange} checked={localProtected} />
-		</label>
+		<>
+			<label className="w-full flex justify-between">
+				<span className="text-xl">계정 비공개</span>
+				<Switch onChange={handleChange} checked={localProtected} />
+			</label>
+			{errorMessage ? <ToastAlert>{errorMessage}</ToastAlert> : null}
+		</>
 	);
 }
