@@ -46,21 +46,17 @@ const useDraftStore = create<DraftStore>()(
 
 					void setItem(draftId, draft.images);
 
-					state.drafts.push(newDraft);
-
-					return state;
+					return { drafts: [newDraft, ...state.drafts] };
 				}),
 			removeDraft: draftId =>
 				set(state => {
-					const id = state.drafts.findIndex(
-						draft => draft.draftId === draftId,
-					);
-
 					void removeItem(draftId);
 
-					state.drafts.splice(id, 1);
+					let list = [...state.drafts];
 
-					return state;
+					list = list.filter(draft => draft.draftId !== draftId);
+
+					return { drafts: [...list] };
 				}),
 			removeAllDraft: () => set(() => ({ drafts: [] })),
 		}),
