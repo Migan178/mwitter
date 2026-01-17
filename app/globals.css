@@ -25,3 +25,7 @@
 @utility gray-border {
 	@apply border border-gray-300;
 }
+
+@utility navbar-icon {
+	@apply flex items-center justify-center gap-x-1 py-3 text-xl font-semibold;
+}
