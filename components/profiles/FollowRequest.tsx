@@ -14,7 +14,7 @@ export default function FollowRequest({
 	setErrorMessage,
 }: {
 	user: ProfileResult;
-	removeRequest: () => void;
+	removeRequest: (userId: number) => void;
 	setErrorMessage: (error: string | null) => void;
 }) {
 	const [acceptState, acceptAction] = useActionState(acceptFollow, null);
@@ -31,8 +31,8 @@ export default function FollowRequest({
 			return () => clearTimeout(timeout);
 		}
 
-		removeRequest();
-	}, [acceptState]);
+		removeRequest(user.id);
+	}, [acceptState, removeRequest, setErrorMessage, user.id]);
 
 	useEffect(() => {
 		if (typeof declineState !== "boolean") return;
@@ -45,8 +45,8 @@ export default function FollowRequest({
 			return () => clearTimeout(timeout);
 		}
 
-		removeRequest();
-	}, [declineState]);
+		removeRequest(user.id);
+	}, [declineState, removeRequest, setErrorMessage, user.id]);
 
 	return (
 		<div className="flex justify-between p-2">

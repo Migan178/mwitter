@@ -19,7 +19,7 @@ const formSchema = z.object({
 		.or(z.instanceof(File, { error: "올바르지 않은 사진" })),
 });
 
-export async function editProfile(initialState: any, formData: FormData) {
+export async function editProfile(initialState: unknown, formData: FormData) {
 	const session = await auth();
 	if (!session || !session.user)
 		return { success: false, error: "올바르지 않은 사용자" };

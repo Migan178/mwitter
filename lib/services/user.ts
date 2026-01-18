@@ -1,4 +1,4 @@
-import prisma from "../prisma";
+import prisma, { Prisma } from "../prisma";
 import {
 	getQueryWithLikesAndReplyCount,
 	type PostWithOriginalResult,
@@ -32,9 +32,9 @@ export interface ProfileResult {
 	description: string | null;
 }
 
-export type UnrefinedUser = Awaited<
-	ReturnType<typeof getUnrefinedUser>
->[number];
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const userQuery = { select: getUserQuery(0) };
+export type UnrefinedUser = Prisma.UserGetPayload<typeof userQuery>;
 
 export function getUserQuery(userId: number) {
 	return {
@@ -64,21 +64,14 @@ export function getUserQuery(userId: number) {
 }
 
 const {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	follower: _,
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	followRequests: __,
 	...userWithoutFollowingQuery
 } = getUserQuery(0);
 
 export { userWithoutFollowingQuery };
-
-/** @description 이 함수는 타입을 위해 있음. 절대 사용 금지. */
-async function getUnrefinedUser() {
-	return await prisma.user.findMany({
-		select: {
-			...getUserQuery(0),
-		},
-	});
-}
 
 export function refineSingleUser(data: UnrefinedUser): UserResult {
 	let followStatus: FollowStatus;

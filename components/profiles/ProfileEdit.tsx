@@ -46,7 +46,7 @@ export default function ProfileEdit({
 		if (state.success) {
 			router.back();
 		}
-	}, [state]);
+	}, [router, state.success]);
 
 	async function handleSubmit(formData: FormData) {
 		let filename: string | undefined;

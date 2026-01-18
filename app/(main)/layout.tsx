@@ -1,7 +1,6 @@
 import "../globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import Navbar from "@/components/Navbar";
-import UserDataInitializer from "@/components/UserDataInitializer";
 import { auth } from "@/lib/auth";
 import { getProfileById, ProfileResult } from "@/lib/services/user";
 import type { Metadata } from "next";

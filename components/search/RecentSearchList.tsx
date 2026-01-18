@@ -23,10 +23,7 @@ export default function RecentSearchList() {
 			</button>
 			<ul>
 				{searchList.map(query => (
-					<li
-						key={Math.floor(Math.random() * 1000)}
-						className="p-2 w-full h-fit relative"
-					>
+					<li key={query} className="p-2 w-full h-fit relative">
 						<div className="flex justify-between">
 							<h1>{query}</h1>
 							<button

@@ -22,7 +22,6 @@ export default function PostCard({
 		repostCount,
 		parentAuthor,
 		original,
-		replies,
 		images,
 	},
 }: {
@@ -46,7 +45,6 @@ export default function PostCard({
 		replyCount = original.replyCount;
 		repostCount = original.repostCount;
 		parentAuthor = original.parentAuthor;
-		replies = original.replies;
 		images = original.images;
 	}
 
@@ -82,12 +80,7 @@ export default function PostCard({
 							/>
 						</Link>
 						<div className="relative z-20 w-fit">
-							<PostMenuButton
-								postId={id}
-								authorId={author.id}
-								authorHandle={author.handle}
-								isFollowingAuthor={author.isFollowing}
-							/>
+							<PostMenuButton postId={id} author={author} />
 						</div>
 					</div>
 					{parentAuthor ? (

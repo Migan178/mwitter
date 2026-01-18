@@ -3,7 +3,10 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
-export async function toggleProtected(initialState: any, isProtected: boolean) {
+export async function toggleProtected(
+	initialState: unknown,
+	isProtected: boolean,
+) {
 	const session = await auth();
 	if (!session || !session.user) return false;
 

@@ -1,15 +1,20 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useMemo } from "react";
 import { XLg } from "react-bootstrap-icons";
 
 export default function ImagePreview({
-	url,
+	file,
 	removeImage,
 }: {
-	url: string;
+	file: File;
 	removeImage: () => void;
 }) {
+	const url = useMemo(() => URL.createObjectURL(file), [file]);
+
+	useEffect(() => () => URL.revokeObjectURL(url), [url]);
+
 	return (
 		<div className="relative h-40 w-40 shrink-0">
 			<button

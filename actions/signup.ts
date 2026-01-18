@@ -13,7 +13,7 @@ const formSchema = z.object({
 	password: z.string("올바르지 않은 비밀번호").trim().min(1),
 });
 
-export async function createAccount(initialState: any, formData: FormData) {
+export async function createAccount(initialState: unknown, formData: FormData) {
 	const { data, success, error } = formSchema.safeParse({
 		id: formData.get("id"),
 		name: formData.get("name"),

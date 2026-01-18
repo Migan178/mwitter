@@ -21,7 +21,7 @@ export interface CreatePostResponse {
 }
 
 export async function createPost(
-	initialState: any,
+	initialState: unknown,
 	formData: FormData,
 ): Promise<CreatePostResponse> {
 	const session = await auth();

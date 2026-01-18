@@ -1,10 +1,17 @@
-import prisma from "../prisma";
-import { type ProfileResult } from "./user";
+import prisma, { Prisma } from "../prisma";
+import {
+	getUserQuery,
+	refineSingleUser,
+	type FollowStatus,
+	type ProfileResult,
+} from "./user";
+
+export type PostAuthor = ProfileResult & { followStatus: FollowStatus };
 
 export interface PostResult {
 	id: number;
 	content: string;
-	author: ProfileResult & { isFollowing: boolean };
+	author: PostAuthor;
 	isLiked: boolean;
 	likeCount: number;
 	replyCount: number;
@@ -30,19 +37,7 @@ export function getQueryWithLikesAndReplyCount(userId: number) {
 		createdAt: true,
 		author: {
 			select: {
-				id: true,
-				name: true,
-				handle: true,
-				profile: true,
-				protected: true,
-				follower: {
-					select: {
-						followerId: true,
-					},
-					where: {
-						followerId: userId,
-					},
-				},
+				...getUserQuery(userId),
 			},
 		},
 		parent: {
@@ -87,7 +82,9 @@ export function getQueryWithLikesAndReplyCount(userId: number) {
 	};
 }
 
-type UnrefinedPost = Awaited<ReturnType<typeof getUnrefinedPost>>[number];
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const postQuery = { select: getQueryWithLikesAndReplyCount(0) };
+type UnrefinedPost = Prisma.PostGetPayload<typeof postQuery>;
 type UnrefinedPostWithOriginal = UnrefinedPost & {
 	original: UnrefinedPost | null;
 };
@@ -110,27 +107,11 @@ export function getWhereQueryWithProtected(userId: number) {
 	];
 }
 
-/** @description 이 함수는 타입을 위해 있음. 절대 사용 금지. */
-async function getUnrefinedPost() {
-	return await prisma.post.findMany({
-		select: {
-			...getQueryWithLikesAndReplyCount(0),
-		},
-	});
-}
-
 export function refineSinglePost(data: UnrefinedPost): PostResult {
 	return {
 		id: data.id,
 		content: data.content,
-		author: {
-			id: data.author.id,
-			name: data.author.name,
-			handle: data.author.handle,
-			profile: data.author.profile,
-			protected: data.author.protected,
-			isFollowing: !!data.author.follower.length,
-		},
+		author: refineSingleUser(data.author),
 		isLiked: data.likes.length > 0,
 		isReposted: data.reposts.length > 0,
 		likeCount: data._count.likes,

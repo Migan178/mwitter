@@ -10,7 +10,8 @@ export default function Post({ post }: { post: PostWithOriginalResult }) {
 		id: 0,
 		handle: "",
 	};
-	let { author, original, id } = post;
+	let { author, id } = post;
+	const { original } = post;
 
 	if (original) {
 		repostId = id;

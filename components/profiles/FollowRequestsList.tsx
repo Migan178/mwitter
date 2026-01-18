@@ -4,7 +4,7 @@ import ToastAlert from "../ToastAlert";
 import FollowRequest from "./FollowRequest";
 import { type ProfileResult } from "@/lib/services/user";
 import useUserDataStore from "@/stores/userData";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 export default function FollowRequestsList({
 	users,
@@ -15,6 +15,12 @@ export default function FollowRequestsList({
 
 	const [requests, setRequests] = useState(users);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+	const removeRequest = useCallback(
+		(userId: number) =>
+			setRequests(requests.filter(request => request.id !== userId)),
+		[requests],
+	);
 
 	if (!isProtected) {
 		return (
@@ -39,13 +45,7 @@ export default function FollowRequestsList({
 					<li key={user.id}>
 						<FollowRequest
 							user={user}
-							removeRequest={() =>
-								setRequests(
-									requests.filter(
-										request => request.id !== user.id,
-									),
-								)
-							}
+							removeRequest={removeRequest}
 							setErrorMessage={setErrorMessage}
 						/>
 						{i < requests.length - 1 ? (

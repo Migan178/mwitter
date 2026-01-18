@@ -22,7 +22,7 @@ export default function PaginatedImages({
 
 	useEffect(() => {
 		router.replace(`${url}/${currentIndex}`, { scroll: false });
-	}, [currentIndex]);
+	}, [currentIndex, router, url]);
 
 	return (
 		<div className="relative bg-black w-full h-screen justify-center flex">

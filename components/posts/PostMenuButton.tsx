@@ -1,20 +1,22 @@
 "use client";
 
 import FollowForm from "../users/FollowForm";
+import { UserResult } from "@/lib/services/user";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { ThreeDotsVertical } from "react-bootstrap-icons";
 
 export default function PostMenuButton({
 	postId,
-	authorId,
-	authorHandle,
-	isFollowingAuthor,
+	author: {
+		id: authorId,
+		protected: authorProtected,
+		handle: authorHandle,
+		followStatus: authorFollowStatus,
+	},
 }: {
 	postId: number;
-	authorId: number;
-	authorHandle: string;
-	isFollowingAuthor: boolean;
+	author: UserResult;
 }) {
 	const [showMenu, setShowMenu] = useState(false);
 	const { data: session } = useSession();
@@ -34,13 +36,22 @@ export default function PostMenuButton({
 					</>
 				) : (
 					<>
-						<FollowForm userId={authorId}>
+						<FollowForm
+							userId={authorId}
+							protected={authorProtected}
+						>
 							<button
 								type="submit"
 								onClick={() => setShowMenu(!showMenu)}
 							>
 								@{authorHandle} 팔로우{" "}
-								{isFollowingAuthor ? "취소" : null}하기
+								{authorFollowStatus === "FOLLOWING"
+									? "취소"
+									: null}
+								{authorFollowStatus === "REQUESTED"
+									? "요청 취소"
+									: null}
+								하기
 							</button>
 						</FollowForm>
 						<button>@{authorHandle} 차단 하기</button>

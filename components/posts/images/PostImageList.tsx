@@ -15,10 +15,7 @@ export default function PostImageList({
 	return (
 		<ol className="flex w-full gap-x-2 overflow-x-auto">
 			{images.map((image, i) => (
-				<li
-					key={Math.floor(Math.random() * 1000)}
-					className="relative h-50 shrink-0"
-				>
+				<li key={image.order} className="relative h-50 shrink-0">
 					<Link
 						href={`/${handle}/posts/${postId}/media/${i}`}
 						scroll={false}

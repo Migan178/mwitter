@@ -22,28 +22,21 @@ export default function CreatePost() {
 	const parentId = useCreatePostStatusState(state => state.postId);
 	const globalContent = useCreatePostStatusState(state => state.content);
 	const globalImages = useCreatePostStatusState(state => state.images);
-	const [localContent, setLocalContent] = useState("");
+	const [localContent, setLocalContent] = useState(globalContent);
 	const [showSaveDraft, setShowSaveDraft] = useState(false);
 	const [showDrafts, setShowDrafts] = useState(false);
-	const [localImages, setLocalImages] = useState<Image[]>([]);
+	const [localImages, setLocalImages] = useState<Image[]>(globalImages);
 	const drafts = useDraftStore(state => state.drafts);
 
 	const pathname = usePathname();
-	const formRef = useRef<HTMLFormElement>(null);
 	const imageInputRef = useRef<HTMLInputElement>(null);
 	const router = useRouter();
 
 	useEffect(() => {
 		if (state?.success) {
-			setLocalContent("");
-
-			formRef.current?.reset();
 			router.back();
 		}
-	}, [state]);
-
-	useEffect(() => setLocalContent(globalContent), [globalContent]);
-	useEffect(() => setLocalImages(globalImages), [globalImages]);
+	}, [router, state]);
 
 	function backButton() {
 		if (localContent || localImages.length) {
@@ -97,7 +90,7 @@ export default function CreatePost() {
 						/>
 					</div>
 				</div>
-				<Form ref={formRef} action={handleSubmit} id="create-post">
+				<Form action={handleSubmit} id="create-post">
 					{parentId ? (
 						<input type="hidden" name="parentId" value={parentId} />
 					) : null}

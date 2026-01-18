@@ -4,7 +4,7 @@ import { followUser } from "../followUser";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
-export async function acceptFollow(initialState: any, followerId: number) {
+export async function acceptFollow(initialState: unknown, followerId: number) {
 	const session = await auth();
 	if (!session || !session.user) return false;
 
