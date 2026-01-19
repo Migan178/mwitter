@@ -30,7 +30,7 @@ export default async function PostMediaPage({
 	if (
 		post.author.protected &&
 		post.author.id !== sessionId &&
-		!post.author.isFollowing
+		post.author.followStatus !== "FOLLOWING"
 	)
 		return <h1>게시글을 볼려면 해당 유저를 팔로우</h1>;
 
