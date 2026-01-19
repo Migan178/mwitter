@@ -27,6 +27,7 @@ export default function Drafts({
 	const setParentId = useCreatePostStatusState(state => state.setParentId);
 	const setContent = useCreatePostStatusState(state => state.setContent);
 	const setGlobalImages = useCreatePostStatusState(state => state.setImages);
+	const removeAllDraft = useDraftStore(state => state.removeAllDraft);
 
 	const [localImages, setLocalImages] = useState<
 		Record<number, ImageWithPreview[]>
@@ -64,11 +65,17 @@ export default function Drafts({
 		setShowDrafts(false);
 	}
 
+	function handleRemoveAll() {
+		removeAllDraft();
+		setShowDrafts(false);
+	}
+
 	return (
 		<Modal>
-			<div className="bg-white p-8">
-				<div>
+			<div className="bg-white p-8 w-100 h-80">
+				<div className="flex justify-between">
 					<button onClick={() => setShowDrafts(false)}>닫기</button>
+					<button onClick={handleRemoveAll}>모두 삭제</button>
 				</div>
 				<ul>
 					{drafts.map((draft, i) => (

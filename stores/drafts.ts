@@ -60,7 +60,17 @@ const useDraftStore = create<DraftStore>()(
 					return { drafts: [...list] };
 				});
 			},
-			removeAllDraft: () => set(() => ({ drafts: [] })),
+			removeAllDraft: () => {
+				set(state => {
+					(async () => {
+						for (const draft of state.drafts) {
+							await removeItem(draft.images);
+						}
+					})();
+
+					return { drafts: [] };
+				});
+			},
 		}),
 		{
 			name: "drafts-store",
