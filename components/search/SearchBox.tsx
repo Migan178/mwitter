@@ -38,11 +38,8 @@ export default function SearchBox({ defaultValue }: { defaultValue?: string }) {
 				defaultValue={defaultValue}
 				ref={queryInputRef}
 			/>
-			<button
-				type="submit"
-				className="py-2 px-3 bg-blue-500 rounded-full"
-			>
-				<div className="text-white flex gap-x-1 justify-center items-center">
+			<button type="submit" className="primary-button">
+				<div className="flex gap-x-1 justify-center items-center">
 					<Search />
 					검색
 				</div>

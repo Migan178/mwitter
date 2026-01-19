@@ -17,7 +17,7 @@ export default function Draft({
 	return (
 		<button
 			onClick={() => applyDraft(draft)}
-			className="flex gap-x-1 w-full p-2"
+			className="flex gap-x-1 w-full py-2"
 		>
 			{preview ? (
 				<Image

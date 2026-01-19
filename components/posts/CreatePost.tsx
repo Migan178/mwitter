@@ -8,7 +8,7 @@ import { createPost } from "@/actions/createPost";
 import useCreatePostStatusState, {
 	ImageWithPreview,
 } from "@/stores/createPostStatus";
-import useDraftStore, { Image } from "@/stores/drafts";
+import useDraftStore, { Image as ImageClass } from "@/stores/drafts";
 import Form from "next/form";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -18,6 +18,7 @@ import {
 	useRef,
 	useState,
 } from "react";
+import { Image, XLg } from "react-bootstrap-icons";
 
 export default function CreatePost() {
 	const pathname = usePathname();
@@ -61,7 +62,7 @@ export default function CreatePost() {
 	function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
 		if (!e.target.files || !e.target.files.length) return;
 		const newImages = [...e.target.files].map(
-			(file, i) => new ImageWithPreview(new Image(i, file)),
+			(file, i) => new ImageWithPreview(new ImageClass(i, file)),
 		);
 
 		setImages([...images, ...newImages]);
@@ -83,9 +84,11 @@ export default function CreatePost() {
 
 	return (
 		<>
-			<div className="bg-white p-8">
+			<div className="bg-white p-8 w-120">
 				<div className="flex justify-between">
-					<button onClick={backButton}>닫기</button>
+					<button onClick={backButton}>
+						<XLg />
+					</button>
 					<div className="flex gap-2">
 						{drafts.length > 0 ? (
 							<button onClick={() => setShowDrafts(true)}>
@@ -96,6 +99,7 @@ export default function CreatePost() {
 							type="submit"
 							value="작성"
 							disabled={pending}
+							className="primary-button"
 							form="create-post"
 						/>
 					</div>
@@ -118,7 +122,9 @@ export default function CreatePost() {
 						<p className="text-red-500">{state?.error}</p>
 					) : null}
 				</Form>
-				<button onClick={handleAddImage}>사진 추가</button>
+				<button onClick={handleAddImage}>
+					<Image size={20} className="text-blue-500" />
+				</button>
 				<ImagePreviewList />
 			</div>
 			{showSaveDraft ? <SaveDraft /> : null}

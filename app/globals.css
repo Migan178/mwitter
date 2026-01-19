@@ -29,3 +29,7 @@
 @utility navbar-icon {
 	@apply flex items-center justify-center gap-x-1 py-3 text-xl font-semibold;
 }
+
+@utility primary-button {
+	@apply rounded-full bg-blue-500 px-3 py-2 text-white;
+}

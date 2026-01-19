@@ -37,13 +37,14 @@ export default function SaveDraft() {
 		<Modal>
 			<div className="bg-white p-8">
 				<p>해당 게시글을 임시 저장 하시겠어요, 아니면 버리시겠어요?</p>
-				<div className="flex gap-x-2">
-					<div>
-						<button onClick={handleSaveDraft}>저장</button>
-					</div>
-					<div>
-						<button onClick={handleDiscardChanges}>버리기</button>
-					</div>
+				<div className="flex gap-x-2 mt-2">
+					<button
+						onClick={handleSaveDraft}
+						className="primary-button"
+					>
+						저장
+					</button>
+					<button onClick={handleDiscardChanges}>버리기</button>
 				</div>
 			</div>
 		</Modal>
