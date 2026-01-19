@@ -2,38 +2,33 @@
 
 import Modal from "../../Modal";
 import useCreatePostStatusState from "@/stores/createPostStatus";
-import useDraftStore, { type Image } from "@/stores/drafts";
+import useDraftStore from "@/stores/drafts";
 import { useRouter } from "next/navigation";
 
-export default function SaveDraft({
-	content,
-	parentId,
-	images,
-}: {
-	content: string;
-	images: Image[];
-	parentId: number | null;
-}) {
+export default function SaveDraft() {
 	const router = useRouter();
-	const addDraft = useDraftStore(state => state.addDraft);
-	const setContent = useCreatePostStatusState(state => state.setContent);
-	const setPostId = useCreatePostStatusState(state => state.setPostId);
 
-	const setImages = useCreatePostStatusState(state => state.setImages);
-	function saveDraft() {
+	const addDraft = useDraftStore(state => state.addDraft);
+	const content = useCreatePostStatusState(state => state.content);
+	const parentId = useCreatePostStatusState(state => state.parentId);
+	const images = useCreatePostStatusState(state => state.images);
+	const discardChanges = useCreatePostStatusState(
+		state => state.discardChanges,
+	);
+
+	function handleSaveDraft() {
 		addDraft({
 			content,
 			parentId,
-			images,
+			images: images.map(image => image.getImage()),
 		});
 
-		router.back();
+		handleDiscardChanges();
 	}
 
-	function discardChanges() {
-		setContent("");
-		setPostId(null);
-		setImages([]);
+	function handleDiscardChanges() {
+		images.forEach(image => image.revokePreview());
+		discardChanges();
 
 		router.back();
 	}
@@ -44,10 +39,10 @@ export default function SaveDraft({
 				<p>해당 게시글을 임시 저장 하시겠어요, 아니면 버리시겠어요?</p>
 				<div className="flex gap-x-2">
 					<div>
-						<button onClick={saveDraft}>저장</button>
+						<button onClick={handleSaveDraft}>저장</button>
 					</div>
 					<div>
-						<button onClick={discardChanges}>버리기</button>
+						<button onClick={handleDiscardChanges}>버리기</button>
 					</div>
 				</div>
 			</div>

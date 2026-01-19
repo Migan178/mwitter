@@ -5,7 +5,9 @@ import Drafts from "./drafts/Drafts";
 import SaveDraft from "./drafts/SaveDraft";
 import ImagePreviewList from "./images/ImagePreviewList";
 import { createPost } from "@/actions/createPost";
-import useCreatePostStatusState from "@/stores/createPostStatus";
+import useCreatePostStatusState, {
+	ImageWithPreview,
+} from "@/stores/createPostStatus";
 import useDraftStore, { Image } from "@/stores/drafts";
 import Form from "next/form";
 import { usePathname, useRouter } from "next/navigation";
@@ -18,42 +20,51 @@ import {
 } from "react";
 
 export default function CreatePost() {
-	const [state, formAction, pending] = useActionState(createPost, null);
-	const parentId = useCreatePostStatusState(state => state.postId);
-	const globalContent = useCreatePostStatusState(state => state.content);
-	const globalImages = useCreatePostStatusState(state => state.images);
-	const [localContent, setLocalContent] = useState(globalContent);
-	const [showSaveDraft, setShowSaveDraft] = useState(false);
-	const [showDrafts, setShowDrafts] = useState(false);
-	const [localImages, setLocalImages] = useState<Image[]>(globalImages);
-	const drafts = useDraftStore(state => state.drafts);
-
 	const pathname = usePathname();
 	const imageInputRef = useRef<HTMLInputElement>(null);
 	const router = useRouter();
 
+	const parentId = useCreatePostStatusState(state => state.parentId);
+	const content = useCreatePostStatusState(state => state.content);
+	const images = useCreatePostStatusState(state => state.images);
+	const setImages = useCreatePostStatusState(state => state.setImages);
+	const drafts = useDraftStore(state => state.drafts);
+	const discardChanges = useCreatePostStatusState(
+		state => state.discardChanges,
+	);
+
+	const [state, formAction, pending] = useActionState(createPost, null);
+	const [showSaveDraft, setShowSaveDraft] = useState(false);
+	const [showDrafts, setShowDrafts] = useState(false);
+
 	useEffect(() => {
 		if (state?.success) {
 			router.back();
+
+			images.forEach(image => image.revokePreview());
+			discardChanges();
 		}
-	}, [router, state]);
+	}, [router, state?.success, discardChanges]);
 
 	function backButton() {
-		if (localContent || localImages.length) {
+		if (content || images.length) {
 			setShowSaveDraft(true);
 			return;
 		}
+
+		images.forEach(image => image.revokePreview());
+		discardChanges();
 
 		router.back();
 	}
 
 	function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
 		if (!e.target.files || !e.target.files.length) return;
-		const newImages = Array.from(e.target.files).map(
-			(file, i) => new Image(i, file),
+		const newImages = [...e.target.files].map(
+			(file, i) => new ImageWithPreview(new Image(i, file)),
 		);
 
-		setLocalImages([...localImages, ...newImages]);
+		setImages([...images, ...newImages]);
 
 		e.target.value = "";
 	}
@@ -63,8 +74,7 @@ export default function CreatePost() {
 	}
 
 	async function handleSubmit(formData: FormData) {
-		const images = localImages.toSorted((a, b) => a.order - b.order);
-		for (const image of images) {
+		for (const image of images.toSorted((a, b) => a.order - b.order)) {
 			formData.append("images", image.file);
 		}
 
@@ -103,29 +113,15 @@ export default function CreatePost() {
 						accept="image/*"
 						multiple
 					/>
-					<ContentInput
-						content={localContent}
-						setContent={setLocalContent}
-					/>
+					<ContentInput />
 					{state && !state?.success ? (
 						<p className="text-red-500">{state?.error}</p>
 					) : null}
 				</Form>
 				<button onClick={handleAddImage}>사진 추가</button>
-				{localImages.length ? (
-					<ImagePreviewList
-						images={localImages}
-						setImages={setLocalImages}
-					/>
-				) : null}
+				<ImagePreviewList />
 			</div>
-			{showSaveDraft ? (
-				<SaveDraft
-					content={localContent}
-					parentId={parentId}
-					images={localImages}
-				/>
-			) : null}
+			{showSaveDraft ? <SaveDraft /> : null}
 			{showDrafts ? <Drafts setShowDrafts={setShowDrafts} /> : null}
 		</>
 	);

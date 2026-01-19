@@ -1,12 +1,11 @@
 "use client";
 
-export default function ContentInput({
-	content,
-	setContent,
-}: {
-	content: string;
-	setContent: (content: string) => void;
-}) {
+import useCreatePostStatusState from "@/stores/createPostStatus";
+
+export default function ContentInput() {
+	const content = useCreatePostStatusState(state => state.content);
+	const setContent = useCreatePostStatusState(state => state.setContent);
+
 	return (
 		<div>
 			<textarea

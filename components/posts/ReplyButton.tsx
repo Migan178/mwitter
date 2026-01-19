@@ -11,11 +11,11 @@ export default function ReplyButton({
 	postId: number;
 	replies: number;
 }) {
-	const setPostId = useCreatePostStatusState(state => state.setPostId);
+	const setParentId = useCreatePostStatusState(state => state.setParentId);
 	const router = useRouter();
 
 	function moveToCreateReply() {
-		setPostId(postId);
+		setParentId(postId);
 		router.push("/posts/create");
 	}
 

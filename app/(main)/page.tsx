@@ -24,7 +24,7 @@ export default async function Home() {
 					<SwitchPostsTabButton />
 				</div>
 				<div className="border-x border-gray-300 w-full">
-					<PostCreateBox />
+					<PostCreateBox parentId={null} />
 				</div>
 				<PostsWrapper
 					allPosts={allPosts}

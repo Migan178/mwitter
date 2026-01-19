@@ -3,8 +3,9 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export class Image {
-	public order: number;
-	public file: File;
+	order: number;
+	file: File;
+
 	public constructor(order: number, file: File) {
 		this.order = order;
 		this.file = file;
@@ -23,8 +24,8 @@ export interface Draft extends Omit<InsertDraft, "images"> {
 }
 export interface DraftStore {
 	drafts: Draft[];
-	addDraft: (draft: InsertDraft) => void;
-	removeDraft: (draftId: number) => void;
+	addDraft: (draft: InsertDraft) => Promise<void>;
+	removeDraft: (draftId: number) => Promise<void>;
 	removeAllDraft: () => void;
 }
 
@@ -32,10 +33,11 @@ const useDraftStore = create<DraftStore>()(
 	persist(
 		set => ({
 			drafts: [],
-			addDraft: draft =>
-				set(state => {
-					const draftId = Math.floor(Math.random() * 1000);
+			addDraft: async draft => {
+				const draftId = Math.floor(Math.random() * 1000);
+				await setItem(draftId, draft.images);
 
+				set(state => {
 					// TODO: change draft id algorithm
 					const newDraft: Draft = {
 						content: draft.content,
@@ -44,20 +46,20 @@ const useDraftStore = create<DraftStore>()(
 						draftId,
 					};
 
-					void setItem(draftId, draft.images);
-
 					return { drafts: [newDraft, ...state.drafts] };
-				}),
-			removeDraft: draftId =>
-				set(state => {
-					void removeItem(draftId);
+				});
+			},
+			removeDraft: async draftId => {
+				await removeItem(draftId);
 
+				set(state => {
 					let list = [...state.drafts];
 
 					list = list.filter(draft => draft.draftId !== draftId);
 
 					return { drafts: [...list] };
-				}),
+				});
+			},
 			removeAllDraft: () => set(() => ({ drafts: [] })),
 		}),
 		{

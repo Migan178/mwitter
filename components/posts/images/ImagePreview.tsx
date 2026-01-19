@@ -1,20 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo } from "react";
 import { XLg } from "react-bootstrap-icons";
 
 export default function ImagePreview({
-	file,
+	preview,
 	removeImage,
 }: {
-	file: File;
+	preview: string;
 	removeImage: () => void;
 }) {
-	const url = useMemo(() => URL.createObjectURL(file), [file]);
-
-	useEffect(() => () => URL.revokeObjectURL(url), [url]);
-
 	return (
 		<div className="relative h-40 w-40 shrink-0">
 			<button
@@ -24,9 +19,10 @@ export default function ImagePreview({
 				<XLg />
 			</button>
 			<Image
-				src={url}
+				src={preview}
 				alt="asdf"
 				className="object-cover rounded-2xl"
+				unoptimized
 				fill
 			/>
 		</div>
