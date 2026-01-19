@@ -12,6 +12,7 @@ import useDraftStore, {
 } from "@/stores/drafts";
 import { get as getItem } from "idb-keyval";
 import { useEffect, useState } from "react";
+import { XLg } from "react-bootstrap-icons";
 
 export interface DraftAndPreview extends DraftType {
 	preview?: string;
@@ -53,12 +54,18 @@ export default function Drafts({
 		setParentId(draft.parentId);
 		setContent(draft.content);
 
-		if (localImages[draft.draftId]) {
-			setGlobalImages(
-				localImages[draft.draftId].toSorted(
-					(a, b) => a.order - b.order,
-				),
-			);
+		for (const keyString in localImages) {
+			const key = Number(keyString);
+			if (isNaN(key)) continue;
+
+			if (key === draft.draftId) {
+				setGlobalImages(
+					localImages[key].toSorted((a, b) => a.order - b.order),
+				);
+				continue;
+			}
+
+			localImages[key].forEach(image => image.revokePreview());
 		}
 
 		removeDraft(draft.draftId);
@@ -67,6 +74,18 @@ export default function Drafts({
 
 	function handleRemoveAll() {
 		removeAllDraft();
+		revokeAllPreview();
+		setShowDrafts(false);
+	}
+
+	function revokeAllPreview() {
+		for (const image of Object.values(localImages)) {
+			image.forEach(image => image.revokePreview());
+		}
+	}
+
+	function handleBack() {
+		revokeAllPreview();
 		setShowDrafts(false);
 	}
 
@@ -74,7 +93,9 @@ export default function Drafts({
 		<Modal>
 			<div className="bg-white p-8 w-100 h-80">
 				<div className="flex justify-between">
-					<button onClick={() => setShowDrafts(false)}>닫기</button>
+					<button onClick={handleBack}>
+						<XLg />
+					</button>
 					<button onClick={handleRemoveAll}>모두 삭제</button>
 				</div>
 				<ul>
