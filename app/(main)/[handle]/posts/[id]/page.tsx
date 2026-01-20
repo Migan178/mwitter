@@ -4,22 +4,32 @@ import PostList from "@/components/posts/PostList";
 import { auth } from "@/lib/auth";
 import {
 	getPostWithLikesAndReplies,
+	getPreviousPostByIdAndIndex,
 	type PostWithOriginalResult,
 } from "@/lib/services/post";
 
 export default async function PostPage({
 	params,
+	searchParams,
 }: {
 	params: Promise<{ id: number; handle: string }>;
+	searchParams: Promise<{ v?: number }>;
 }) {
 	let post: PostWithOriginalResult | null;
 
 	const session = await auth();
 	const { id, handle } = await params;
+	const { v: version } = await searchParams;
 	const sessionId = Number(session?.user?.id || 0);
 
 	try {
-		post = await getPostWithLikesAndReplies(Number(id), sessionId);
+		if (version)
+			post = await getPreviousPostByIdAndIndex(
+				Number(id),
+				sessionId,
+				Number(version),
+			);
+		else post = await getPostWithLikesAndReplies(Number(id), sessionId);
 	} catch (err) {
 		console.log(err);
 		return <h1>게시글 로드 중 문제 발생.</h1>;

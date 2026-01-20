@@ -15,6 +15,7 @@ export class Image {
 export interface InsertDraft {
 	content: string;
 	parentId: number | null;
+	postId: number | null;
 	images: Image[];
 }
 
@@ -40,10 +41,9 @@ const useDraftStore = create<DraftStore>()(
 				set(state => {
 					// TODO: change draft id algorithm
 					const newDraft: Draft = {
-						content: draft.content,
-						parentId: draft.parentId,
-						images: draftId,
+						...draft,
 						draftId,
+						images: draftId,
 					};
 
 					return { drafts: [newDraft, ...state.drafts] };

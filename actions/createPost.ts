@@ -11,6 +11,7 @@ import * as z from "zod";
 const formSchema = z.object({
 	content: z.string("내용이 없음").trim().min(1),
 	parentId: z.coerce.number().nullable(),
+	postId: z.coerce.number().nullable(),
 	currentPath: z.string("올바르지 않은요청 URL").trim().min(1),
 	images: z.array(z.instanceof(File)),
 });
@@ -36,13 +37,56 @@ export async function createPost(
 		content: formData.get("content"),
 		parentId: formData.get("parentId"),
 		currentPath: formData.get("currentPath"),
+		postId: formData.get("postId"),
 		images: files,
 	});
 	if (!success) return { success: false, error: error.message };
 
-	const { content, currentPath, images: imagesData, parentId } = data;
+	const { content, currentPath, images: imagesData, parentId, postId } = data;
 
 	try {
+		if (postId) {
+			const originalPost = await prisma.post.findUnique({
+				where: {
+					id: postId,
+				},
+				select: {
+					authorId: true,
+					content: true,
+				},
+			});
+
+			if (!originalPost)
+				return {
+					success: false,
+					error: "해당 하는 원본 게시글을 찾을 수 없음",
+				};
+
+			if (originalPost.authorId !== userId)
+				return {
+					success: false,
+					error: "원본 포스트와 작성자가 다름",
+				};
+
+			await prisma.post.update({
+				where: {
+					id: postId,
+				},
+				data: {
+					content,
+					history: {
+						create: {
+							content: originalPost.content,
+						},
+					},
+				},
+			});
+
+			revalidatePath(currentPath);
+
+			return { success: true };
+		}
+
 		const images: { name: string; url: string; order: number }[] = [];
 
 		if (imagesData.length) {
@@ -77,7 +121,7 @@ export async function createPost(
 		const newPost = await prisma.post.create({
 			data: {
 				parentId,
-				content: content,
+				content,
 				authorId: userId,
 				images: {
 					create: images,

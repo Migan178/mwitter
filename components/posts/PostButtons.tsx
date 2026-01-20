@@ -6,21 +6,25 @@ import RepostButton from "./RepostButton";
 export default function PostButtons({
 	postId,
 	authorId,
+	authorHandle,
 	replies,
 	likes,
 	liked,
 	reposts,
 	reposted,
 	createdAt,
+	isEdited,
 }: {
 	postId: number;
 	authorId: number;
+	authorHandle: string;
 	replies: number;
 	likes: number;
 	liked: boolean;
 	reposts: number;
 	reposted: boolean;
 	createdAt: Date;
+	isEdited: boolean;
 }) {
 	return (
 		<div className="flex justify-between ml-12 mt-2 gap-x-3">
@@ -38,7 +42,12 @@ export default function PostButtons({
 				initialReposts={reposts}
 			/>
 			<div className="text-gray-500">
-				<PostCreatedAt createdAt={createdAt} />
+				<PostCreatedAt
+					createdAt={createdAt}
+					isEdited={isEdited}
+					postId={postId}
+					authorHandle={authorHandle}
+				/>
 			</div>
 		</div>
 	);

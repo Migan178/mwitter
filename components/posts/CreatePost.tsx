@@ -26,6 +26,7 @@ export default function CreatePost() {
 	const router = useRouter();
 
 	const parentId = useCreatePostStatusState(state => state.parentId);
+	const postId = useCreatePostStatusState(state => state.postId);
 	const content = useCreatePostStatusState(state => state.content);
 	const images = useCreatePostStatusState(state => state.images);
 	const setImages = useCreatePostStatusState(state => state.setImages);
@@ -108,23 +109,30 @@ export default function CreatePost() {
 					{parentId ? (
 						<input type="hidden" name="parentId" value={parentId} />
 					) : null}
+					{postId ? (
+						<input type="hidden" name="postId" value={postId} />
+					) : null}
 					<input type="hidden" name="currentPath" value={pathname} />
-					<input
-						type="file"
-						className="hidden"
-						ref={imageInputRef}
-						onChange={handleFileChange}
-						accept="image/*"
-						multiple
-					/>
+					{!postId ? (
+						<input
+							type="file"
+							className="hidden"
+							ref={imageInputRef}
+							onChange={handleFileChange}
+							accept="image/*"
+							multiple
+						/>
+					) : null}
 					<ContentInput />
 					{state && !state?.success ? (
 						<p className="text-red-500">{state?.error}</p>
 					) : null}
 				</Form>
-				<button onClick={handleAddImage}>
-					<Image size={20} className="text-blue-500" />
-				</button>
+				{!postId ? (
+					<button onClick={handleAddImage}>
+						<Image size={20} className="text-blue-500" />
+					</button>
+				) : null}
 				<ImagePreviewList />
 			</div>
 			{showSaveDraft ? <SaveDraft /> : null}

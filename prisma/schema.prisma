@@ -83,8 +83,19 @@ model Post {
 
     reposts Post[] @relation("Original")
 
+    history PostHistory[]
+
     notifications Notification[]
     images        PostImage[]
+}
+
+model PostHistory {
+    id      Int    @id @default(autoincrement())
+    content String
+
+    postId    Int
+    post      Post     @relation(fields: [postId], references: [id])
+    createdAt DateTime @default(now())
 }
 
 model PostImage {

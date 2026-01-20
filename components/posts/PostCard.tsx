@@ -23,6 +23,7 @@ export default function PostCard({
 		parentAuthor,
 		original,
 		images,
+		isEdited,
 	},
 }: {
 	post: PostWithOriginalResult;
@@ -46,6 +47,7 @@ export default function PostCard({
 		repostCount = original.repostCount;
 		parentAuthor = original.parentAuthor;
 		images = original.images;
+		isEdited = original.isEdited;
 	}
 
 	const authorHref = `/${encodeURIComponent(original ? repostedBy.handle : author.handle)}`;
@@ -80,7 +82,11 @@ export default function PostCard({
 							/>
 						</Link>
 						<div className="relative z-20 w-fit">
-							<PostMenuButton postId={id} author={author} />
+							<PostMenuButton
+								postId={id}
+								postContent={content}
+								author={author}
+							/>
 						</div>
 					</div>
 					{parentAuthor ? (
@@ -110,6 +116,8 @@ export default function PostCard({
 					reposts={repostCount}
 					reposted={isReposted}
 					createdAt={createdAt}
+					isEdited={isEdited}
+					authorHandle={author.handle}
 				/>
 			</div>
 		</div>

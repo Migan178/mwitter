@@ -6,9 +6,9 @@ import useUserDataStore from "@/stores/userData";
 import { useRouter } from "next/navigation";
 
 export default function PostCreateBox({
-	parentId,
+	parentId = null,
 }: {
-	parentId: number | null;
+	parentId?: number | null;
 }) {
 	const router = useRouter();
 

@@ -12,6 +12,7 @@ export default function SaveDraft() {
 	const content = useCreatePostStatusState(state => state.content);
 	const parentId = useCreatePostStatusState(state => state.parentId);
 	const images = useCreatePostStatusState(state => state.images);
+	const postId = useCreatePostStatusState(state => state.postId);
 	const discardChanges = useCreatePostStatusState(
 		state => state.discardChanges,
 	);
@@ -20,6 +21,7 @@ export default function SaveDraft() {
 		addDraft({
 			content,
 			parentId,
+			postId,
 			images: images.map(image => image.getImage()),
 		});
 

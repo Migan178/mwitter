@@ -2,12 +2,15 @@
 
 import FollowForm from "../users/FollowForm";
 import { UserResult } from "@/lib/services/user";
+import useCreatePostStatusState from "@/stores/createPostStatus";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ThreeDotsVertical } from "react-bootstrap-icons";
 
 export default function PostMenuButton({
 	postId,
+	postContent,
 	author: {
 		id: authorId,
 		protected: authorProtected,
@@ -16,10 +19,23 @@ export default function PostMenuButton({
 	},
 }: {
 	postId: number;
+	postContent: string;
 	author: UserResult;
 }) {
-	const [showMenu, setShowMenu] = useState(false);
 	const { data: session } = useSession();
+	const router = useRouter();
+
+	const setPostId = useCreatePostStatusState(state => state.setPostId);
+	const setContent = useCreatePostStatusState(state => state.setContent);
+
+	const [showMenu, setShowMenu] = useState(false);
+
+	function handleEditPost() {
+		setPostId(postId);
+		setContent(postContent);
+
+		router.push("/posts/create");
+	}
 
 	return (
 		<div className="relative">
@@ -31,7 +47,7 @@ export default function PostMenuButton({
 			>
 				{session && Number(session.user?.id) === authorId ? (
 					<>
-						<button>게시글 수정</button>
+						<button onClick={handleEditPost}>게시글 수정</button>
 						<button>게시글 삭제</button>
 					</>
 				) : (

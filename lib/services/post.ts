@@ -24,6 +24,7 @@ export interface PostResult {
 	}[];
 	parentAuthor?: string;
 	createdAt: Date;
+	isEdited: boolean;
 }
 
 export interface PostWithOriginalResult extends PostResult {
@@ -35,6 +36,7 @@ export function getQueryWithLikesAndReplyCount(userId: number) {
 		id: true,
 		content: true,
 		createdAt: true,
+		updatedAt: true,
 		author: {
 			select: {
 				...getUserQuery(userId),
@@ -121,7 +123,9 @@ export function refineSinglePost(data: UnrefinedPost): PostResult {
 			order: image.order,
 			url: image.url,
 		})),
-		createdAt: data.createdAt,
+		// 어차피 createdAt이랑 updatedAt이랑 게시글이 수정 되지 않았다면 같음
+		createdAt: data.updatedAt,
+		isEdited: data.createdAt < data.updatedAt,
 	};
 }
 
@@ -264,4 +268,45 @@ export async function getPostsWithLikesAndReplyCountByQuery(
 	});
 
 	return refineMultiplePosts(posts);
+}
+
+export async function getPreviousPostByIdAndIndex(
+	id: number,
+	userId: number,
+	idx: number,
+): Promise<PostWithOriginalResult | null> {
+	const postData = await prisma.post.findUnique({
+		where: {
+			id,
+		},
+		select: {
+			...getQueryWithLikesAndReplyCount(userId),
+			replies: {
+				select: { ...getQueryWithLikesAndReplyCount(userId) },
+			},
+			history: {
+				skip: idx - 1,
+				take: 1,
+				select: {
+					content: true,
+					createdAt: true,
+				},
+				orderBy: {
+					createdAt: "desc",
+				},
+			},
+		},
+	});
+
+	if (!postData) return null;
+
+	const { history, replies, ...post } = postData;
+
+	post.content = history[0].content;
+	post.createdAt = history[0].createdAt;
+
+	return {
+		...refineSinglePost(post),
+		replies: refineMultiplePosts(replies),
+	};
 }
