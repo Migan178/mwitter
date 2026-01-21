@@ -1,5 +1,6 @@
 "use server";
 
+import { Response } from "./types";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import userMentionRegexp from "@/lib/regex/userMention";
@@ -16,15 +17,10 @@ const formSchema = z.object({
 	images: z.array(z.instanceof(File)),
 });
 
-export interface CreatePostResponse {
-	success: boolean;
-	error?: string;
-}
-
 export async function createPost(
 	initialState: unknown,
 	formData: FormData,
-): Promise<CreatePostResponse> {
+): Promise<Response> {
 	const session = await auth();
 	if (!session || !session.user)
 		return { success: false, error: "올바르지 않은 사용자" };

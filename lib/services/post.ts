@@ -167,6 +167,7 @@ export async function getAllPostsWithLikesAndReplyCount(
 			author: {
 				OR: [...getWhereQueryWithProtected(userId)],
 			},
+			deleteAt: null,
 		},
 		orderBy: {
 			createdAt: "desc",
@@ -201,6 +202,7 @@ export async function getFollowingPostsWithLikesReplyCount(
 					},
 				},
 			},
+			deleteAt: null,
 		},
 	});
 
@@ -233,6 +235,7 @@ export async function getPostWithLikesAndReplies(
 			author: {
 				OR: [...getWhereQueryWithProtected(userId)],
 			},
+			deleteAt: null,
 		},
 	});
 
@@ -264,6 +267,7 @@ export async function getPostsWithLikesAndReplyCountByQuery(
 			content: {
 				contains: query,
 			},
+			deleteAt: null,
 		},
 	});
 
@@ -278,6 +282,7 @@ export async function getPreviousPostByIdAndIndex(
 	const postData = await prisma.post.findUnique({
 		where: {
 			id,
+			deleteAt: null,
 		},
 		select: {
 			...getQueryWithLikesAndReplyCount(userId),
