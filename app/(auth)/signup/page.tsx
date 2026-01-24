@@ -4,6 +4,7 @@ import { createAccount } from "@/actions/signup";
 import EmailInput from "@/components/signup/EmailInput";
 import IdInput from "@/components/signup/IdInput";
 import NameInput from "@/components/signup/NameInput";
+import PasswordCheckInput from "@/components/signup/PasswordCheckInput";
 import PasswordInput from "@/components/signup/PasswordInput";
 import Form from "next/form";
 import { useActionState, useState } from "react";
@@ -15,6 +16,7 @@ export default function SignUp() {
 	const [email, setEmail] = useState("");
 	const [name, setName] = useState("");
 	const [password, setPassword] = useState("");
+	const [passwordCheck, setPasswordCheck] = useState("");
 
 	return (
 		<div className="grid h-screen items-center justify-center">
@@ -25,6 +27,7 @@ export default function SignUp() {
 						email={email}
 						setEmail={setEmail}
 						setVerified={setVerified}
+						checkValid
 					/>
 					<NameInput
 						name={name}
@@ -34,6 +37,13 @@ export default function SignUp() {
 					<PasswordInput
 						password={password}
 						setPassword={setPassword}
+						setVerified={setVerified}
+						checkValid
+					/>
+					<PasswordCheckInput
+						password={password}
+						passwordCheck={passwordCheck}
+						setPasswordCheck={setPasswordCheck}
 						setVerified={setVerified}
 					/>
 					<div>

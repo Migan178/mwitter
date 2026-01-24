@@ -5,25 +5,29 @@ import { useState } from "react";
 
 export default function EmailInput({
 	email,
+	checkValid = false,
 	setEmail,
-	setVerified,
+	setVerified = () => {},
 }: {
 	email: string;
+	checkValid?: boolean;
 	setEmail: (email: string) => void;
-	setVerified: (verified: boolean) => void;
+	setVerified?: (verified: boolean) => void;
 }) {
 	const [isEmailDuplicated, setEmailIsDuplicated] = useState(false);
 	const [isEmailChecking, setEmailIsChecking] = useState(false);
 
 	async function verifyEmail() {
-		setEmailIsChecking(true);
-		setEmailIsDuplicated(false);
+		if (checkValid) {
+			setEmailIsChecking(true);
+			setEmailIsDuplicated(false);
 
-		const isDuplicated = await checkEmailDuplication(email);
-		setEmailIsDuplicated(isDuplicated);
-		setVerified(!isDuplicated);
+			const isDuplicated = await checkEmailDuplication(email);
+			setEmailIsDuplicated(isDuplicated);
+			setVerified(!isDuplicated);
 
-		setEmailIsChecking(false);
+			setEmailIsChecking(false);
+		}
 	}
 
 	return (
@@ -38,11 +42,11 @@ export default function EmailInput({
 				onBlur={verifyEmail}
 				required
 			/>
-			{isEmailChecking ? <p>검사 중...</p> : null}
-			{isEmailDuplicated ? (
+			{checkValid && isEmailChecking ? <p>검사 중...</p> : null}
+			{checkValid && isEmailDuplicated ? (
 				<p className="text-red-500">이미 사용된 email</p>
 			) : null}
-			{email && !isEmailChecking && !isEmailDuplicated ? (
+			{checkValid && email && !isEmailChecking && !isEmailDuplicated ? (
 				<p className="text-green-500">사용 가능</p>
 			) : null}
 		</div>

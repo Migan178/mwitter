@@ -61,4 +61,7 @@ export const {
 			return session;
 		},
 	},
+	pages: {
+		signIn: "/login",
+	},
 });

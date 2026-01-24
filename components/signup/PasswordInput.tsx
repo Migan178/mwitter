@@ -4,58 +4,43 @@ import { useState } from "react";
 
 export default function PasswordInput({
 	password,
+	checkValid = false,
 	setPassword,
-	setVerified,
+	setVerified = () => {},
 }: {
 	password: string;
+	checkValid?: boolean;
 	setPassword: (password: string) => void;
-	setVerified: (verified: boolean) => void;
+	setVerified?: (verified: boolean) => void;
 }) {
-	const [passwordCheck, setPasswordCheck] = useState("");
-	const [isPasswordPassed, setPasswordIsPassed] = useState(false);
+	const [isValid, setValid] = useState(false);
 
-	function checkPassword() {
-		if (!password || !passwordCheck) {
-			setPasswordIsPassed(false);
-			setVerified(false);
-			return;
+	function handleBlur() {
+		if (checkValid) {
+			const isValid = password.length > 0;
+			setVerified(isValid);
+			setValid(isValid);
 		}
-
-		const isPassed = password === passwordCheck;
-		setPasswordIsPassed(isPassed);
-		setVerified(isPassed);
 	}
 
 	return (
 		<div>
-			<div>
-				<label>비밀번호</label>
-				<input
-					type="password"
-					placeholder="당신이 사용할 비밀번호"
-					name="password"
-					value={password}
-					onChange={e => setPassword(e.target.value)}
-					onBlur={checkPassword}
-					required
-				/>
-			</div>
-			<div>
-				<label>비밀번호 확인</label>
-				<input
-					type="password"
-					placeholder="비밀번호 확인"
-					value={passwordCheck}
-					onChange={e => setPasswordCheck(e.target.value)}
-					onBlur={checkPassword}
-					required
-				/>
-			</div>
-			{!isPasswordPassed ? (
+			<label>비밀번호</label>
+			<input
+				type="password"
+				placeholder="당신이 사용할 비밀번호"
+				name="password"
+				value={password}
+				onChange={e => setPassword(e.target.value)}
+				onBlur={handleBlur}
+				required
+			/>
+			{checkValid && !isValid ? (
 				<p className="text-red-500">올바르지 않은 비밀번호</p>
-			) : (
+			) : null}
+			{checkValid && isValid ? (
 				<p className="text-green-500">올바른 비밀번호</p>
-			)}
+			) : null}
 		</div>
 	);
 }
